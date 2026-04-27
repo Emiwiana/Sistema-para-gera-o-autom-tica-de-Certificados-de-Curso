@@ -1,0 +1,72 @@
+
+html{
+    background-color: #2655b5;
+
+    height: 1240px;
+    width: 1754px;
+}
+h1{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 100px;
+    color: #2655b5;
+    place-self: center;
+}
+body{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    background-color: #dbf2ff;
+    height: 1240px;
+    width: 1754px;
+    border: 100px solid #2655b5;
+}
+#um{
+    font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 50px;
+    color:#2655b5;
+    place-self: center;
+}
+#aluno{
+    font-family: 'Arial Narrow Bold', sans-serif;
+    font-size: 50px;
+    place-self: center;
+    color:#2655b5
+}
+#texto{
+    font-family: 'Arial Narrow Bold', sans-serif;
+    font-size: 30px;
+    color:#2655b5;
+    place-self: center;
+    
+}
+
+#parabens{
+    font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-style: italic;
+    font-size:80px;
+    color:#2655b5;
+    place-self:center;
+}
+
+#estrela{
+    rotate: 190deg;
+    
+   
+}
+#smiley{
+    position: absolute;
+    top: 10px;
+    left: 1500px;
+    height: 300px;
+    width: 300px;
+    
+}
+#assinatura{
+    font-family: 'Arial Narrow Bold', sans-serif;
+    font-size: 30px;
+    color:#2655b5;
+    position: absolute;
+    left: 1400px;
+    top: 1200px;
+    border: #2655b5 solid 5px;
+}
