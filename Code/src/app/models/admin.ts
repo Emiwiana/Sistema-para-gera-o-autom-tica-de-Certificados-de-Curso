@@ -1,3 +1,3 @@
-class admin {
+class Admin {
 
 }
