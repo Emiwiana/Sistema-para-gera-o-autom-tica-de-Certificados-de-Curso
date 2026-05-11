@@ -1,7 +1,7 @@
 /// <reference types="node" />
 //app to be launched through this file
 import Handlebars from "handlebars";
-import generatePDFs from "./controllers/pdfConverter";
+import {generatePDFs} from "./controllers/pdfConverter";
 import fs from 'fs';
 
 
@@ -34,7 +34,7 @@ for (const item of list) {
 
 //fs.writeFileSync("certificado.html", renderedHTML, "utf8");
 
-generatePDFs();
+generatePDFs()
 
 
 

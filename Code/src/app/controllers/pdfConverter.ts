@@ -1,7 +1,8 @@
 import fs from "fs";
 import puppeteer from 'puppeteer';
 
-async function generatePDFs() {
+
+export async function generatePDFs() {
 
     const files = fs.readdirSync("src/app/output");
 
@@ -15,8 +16,8 @@ async function generatePDFs() {
 
         const page = await browser.newPage();
 
-        page.on("console", msg => console.log(msg.text()));
-        page.on("pageerror", err => console.log(err));
+        page.on("console", (msg: { text: () => any; }) => console.log(msg.text()));
+        page.on("pageerror", (err: any) => console.log(err));
 
         await page.goto(
             `http://localhost:5500/src/app/output/${file}`,
@@ -36,6 +37,6 @@ async function generatePDFs() {
 
         console.log(`${file} convertido para PDF`);
     }
-
-    module.exports = {generatePDFs}
 }
+
+module.exports = {generatePDFs}

@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@types/node": "^25.6.0",
-    "casbin": "^5.50.0"
+    "casbin": "^5.50.0",
+    "handlebars": "^4.7.9",
+    "puppeteer": "^24.43.0"
   },
   "devDependencies": {
     "typescript": "^5.5.3"
