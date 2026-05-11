@@ -1,8 +1,8 @@
 /// <reference types="node" />
 //app to be launched through this file
-import {generatePDFs} from "./controllers/pdfConverter";
+import {generatePDFs} from "./controllers/certificate/pdfConverter";
 import fs from 'fs';
-import {renderTemplate} from "./controllers/templateRenderer";
+import {renderTemplate} from "./controllers/certificate/templateRenderer";
 
 const template = fs.readFileSync("src\\app\\template\\templatev0.html", "utf8");
 

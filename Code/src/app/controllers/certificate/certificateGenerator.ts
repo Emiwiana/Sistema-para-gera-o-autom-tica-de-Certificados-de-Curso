@@ -1,0 +1,1 @@
+//TODO: Lógica completa de gerar e assinar o certificado vai aqui
