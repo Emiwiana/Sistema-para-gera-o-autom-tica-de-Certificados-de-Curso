@@ -1,16 +1,9 @@
 /// <reference types="node" />
 //app to be launched through this file
-import Handlebars from "handlebars";
 import {generatePDFs} from "./controllers/pdfConverter";
 import fs from 'fs';
+import {renderTemplate} from "./controllers/templateRenderer";
 
-
-export function renderTemplate(template: any, data: { nome: string; numero: string; curso: string; data_inicio: string; data_fim: string; }) {
-    const templateSource = String(template);
-    const compiledTemplate = Handlebars.compile(templateSource);
-    const renderedHTML = compiledTemplate(data);
-    return renderedHTML;
-}
 const template = fs.readFileSync("src\\app\\template\\templatev0.html", "utf8");
 
 const renderedHTML = renderTemplate(template, {
