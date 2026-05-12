@@ -44,6 +44,7 @@ export async function generatePdfCertificates(studentList: any) {
 
             fs.unlink(tempCertificatePath, (err) => {});
             console.log(`PDF Generated for ${student.name}: ${fileName}`);
+            signCertificate(fullOutputPath);
         }
     } catch (error) {}
     finally {
@@ -64,4 +65,8 @@ function fillCertificateTemplate(template: any, data: { nome: string; numero: st
     const templateSource = String(template);
     const compiledTemplate = Handlebars.compile(templateSource);
     return compiledTemplate(data);
+}
+
+function signCertificate(pdfPath : string) : void {
+    //TODO: Lógica de assinar o certificado
 }
