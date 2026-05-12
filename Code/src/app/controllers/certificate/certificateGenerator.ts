@@ -3,6 +3,7 @@ import fs from "fs";
 import {pathToFileURL} from "node:url";
 import puppeteer, {Page} from "puppeteer";
 import Handlebars from "handlebars";
+import {Student} from "../../models/student";
 
 
 const templatePath : string = path.join(__dirname, 'template', 'html','templatev0.html');
@@ -10,7 +11,7 @@ const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'te
 const outputPathPDF: string = path.join(__dirname, '..', '..', '..', 'output');
 const template = fs.readFileSync(templatePath, "utf8");
 
-export async function generatePdfCertificates(studentList: any) {
+export async function generatePdfCertificates(studentList: Student[]) {
     //starts puppeteer
     const browser = await puppeteer.launch({
         headless: true
@@ -34,7 +35,7 @@ export async function generatePdfCertificates(studentList: any) {
     }
 }
 
-async function generatePDF(student:any, page:Page) {
+async function generatePDF(student : Student, page:Page) {
 
     const fileName: string = 'certificado_' + student.id + '.pdf';
     const fullOutputPath = path.join(outputPathPDF, fileName);
@@ -62,16 +63,21 @@ async function generatePDF(student:any, page:Page) {
     console.log(`PDF Generated for ${student.name}: ${fileName}`);
 }
 
-function generateTempHTML(student : any) {
+function generateTempHTML(student : Student) {
     //TODO Alterar lógica para usar classe estudante em vez de inputs da lista
     const renderedHTML = fillTemplate(template, student);
     fs.writeFileSync(tempCertificatePath, renderedHTML, "utf8");
 }
 
-function fillTemplate(template: any, data: { name: string; id: string; curso: string; data_inicio: string; data_fim: string; }) {
+function fillTemplate(template: any, student: Student) {
     const templateSource = String(template);
     const compiledTemplate = Handlebars.compile(templateSource);
-    return compiledTemplate(data);
+    return compiledTemplate({
+        name: student.name,
+        id: student.id.toString(),
+        curso: student.course.name,
+        data_inicio: student.course.startDate,
+        data_fim: student.course.startDate, });
 }
 
 function signCertificate(student : any) : void {

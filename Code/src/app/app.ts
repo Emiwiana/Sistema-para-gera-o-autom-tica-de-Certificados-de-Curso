@@ -1,13 +1,16 @@
 /// <reference types="node" />
 //app to be launched through this file
 import {generatePdfCertificates} from "./controllers/certificate/certificateGenerator";
+import {Student} from "./models/student";
+import {Course} from "./models/course";
 
 
+const leim = new Course(1101, "LEIM", "12-09-2023", "12-09-2023")
 const list = [
-    { name: "Nilo Duarte", id: "48155", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
-    { name: "Maria Silva", id: "48156", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
-    { name: "João Pereira", id: "48157", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" }
-];
+    new Student(48155, "Nilo Duarte", "a48155@alunos.isel.pt", leim),
+    new Student(48156, "Maria Silva", "", leim),
+    new Student(48157, "João Pereira", "", leim)
+]
 
 generatePdfCertificates(list);
 
