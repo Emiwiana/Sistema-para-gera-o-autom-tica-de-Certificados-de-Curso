@@ -1,33 +1,22 @@
 /// <reference types="node" />
 //app to be launched through this file
-import {generatePDFs} from "./controllers/certificate/pdfConverter";
-import fs from 'fs';
-import {renderTemplate} from "./controllers/certificate/templateRenderer";
+import {generateCertificates} from "./controllers/certificate/certificateGenerator";
 
-const template = fs.readFileSync("src\\app\\template\\templatev0.html", "utf8");
-
-const renderedHTML = renderTemplate(template, {
-    nome: "Nilo Duarte",
-    numero: "48155",
-    curso: "LEIM",
-    data_inicio: "12-09-2023",
-    data_fim: "17-07-2026"
-});
 
 const list = [
-    { nome: "Nilo Duarte", numero: "48155", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
-    { nome: "Maria Silva", numero: "48156", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
-    { nome: "João Pereira", numero: "48157", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" }
+    { name: "Nilo Duarte", id: "48155", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
+    { name: "Maria Silva", id: "48156", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" },
+    { name: "João Pereira", id: "48157", curso: "LEIM", data_inicio: "12-09-2023", data_fim: "17-07-2026" }
 ];
 
-for (const item of list) {
-    const renderedHTML = renderTemplate(template, item);
-    fs.writeFileSync(`src\\app\\output\\certificado_${item.numero}.html`, renderedHTML, "utf8");
-}
+generateCertificates(list);
 
 //fs.writeFileSync("certificado.html", renderedHTML, "utf8");
 
-generatePDFs()
+//generatePDFs()
+
+
+
 
 
 
