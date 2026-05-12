@@ -1,3 +1,7 @@
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
 
 h1{
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -11,13 +15,14 @@ html, body {
 }
 
 body {
-    width: 297mm;
-    height: 210mm;
+    width: 210mm;
+    height: 297mm;
 
     box-sizing: border-box;
 
     border: 20px solid #2655b5;
     background-color: #dbf2ff;
+    position: relative;
 
     display: flex;
     flex-direction: column;
@@ -25,7 +30,7 @@ body {
     align-items: center;
 
     text-align: center;
-} 
+}
 
 #um{
     font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -44,7 +49,7 @@ body {
     font-size: 20px;
     color:#2655b5;
     place-self: center;
-    
+
 }
 
 #parabens{

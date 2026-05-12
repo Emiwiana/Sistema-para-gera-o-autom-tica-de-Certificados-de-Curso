@@ -21,8 +21,7 @@ export async function generatePdfCertificates(studentList: any) {
             generateTempHTML(student);                   // creates temp html certificate
             const page = await browser.newPage(); // creates new empty page to put html in
             await generatePDF(student, page)            // generates pdf file based on temp html
-
-            signCertificate(student);
+            signCertificate(student);                   // TODO: sign the generated certificate
         }
     } catch (error) {
         // @ts-ignore
@@ -50,7 +49,14 @@ async function generatePDF(student:any, page:Page) {
         path: fullOutputPath,
         format: "A4",
         printBackground: true,
-        preferCSSPageSize: true
+        preferCSSPageSize: true,
+        landscape: true,
+        margin: {
+            top: '0px',
+            right: '0px',
+            bottom: '0px',
+            left: '0px'
+        }
     });
 
     console.log(`PDF Generated for ${student.name}: ${fileName}`);
@@ -62,7 +68,7 @@ function generateTempHTML(student : any) {
     fs.writeFileSync(tempCertificatePath, renderedHTML, "utf8");
 }
 
-function fillTemplate(template: any, data: { nome: string; numero: string; curso: string; data_inicio: string; data_fim: string; }) {
+function fillTemplate(template: any, data: { name: string; id: string; curso: string; data_inicio: string; data_fim: string; }) {
     const templateSource = String(template);
     const compiledTemplate = Handlebars.compile(templateSource);
     return compiledTemplate(data);
