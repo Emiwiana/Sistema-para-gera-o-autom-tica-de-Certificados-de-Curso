@@ -1,5 +1,3 @@
-//TODO: Lógica completa de gerar e assinar o certificado vai aqui
-
 import path from "path";
 import fs from "fs";
 import {pathToFileURL} from "node:url";
@@ -19,12 +17,10 @@ export async function generatePdfCertificates(studentList: any) {
 
     try {
         for (const student of studentList) {
-
-            const tempCertificatePath = generateTempHTML(student, template, tempFilePath);
             const page = await browser.newPage();
-
-            const absoluteHtmlPath = path.resolve(tempCertificatePath);
-            const fileUrl = pathToFileURL(absoluteHtmlPath).href;
+            //TODO: Clean up and document this code
+            const tempCertificatePath = generateTempHTML(student, template, tempFilePath);
+            const fileUrl = pathToFileURL(path.resolve(tempCertificatePath)).href;
 
             const fileName:string = 'certificado_' + student.id + '.pdf';
             const fullOutputPath = path.join(outputPathPDF, fileName);
@@ -55,7 +51,7 @@ export async function generatePdfCertificates(studentList: any) {
 function generateTempHTML(student : any, template : any, outputPath : string) : string {
     //TODO Alterar lógica para usar classe estudante em vez de inputs da lista
     const renderedHTML = fillCertificateTemplate(template, student);
-    const certificateName : string = '\\certificado_' + student.id + '.html';
+    const certificateName : string = 'temp_certificate';
     const certificatePath = `${outputPath}${certificateName}`;
     fs.writeFileSync(certificatePath, renderedHTML, "utf8");
     return certificatePath
