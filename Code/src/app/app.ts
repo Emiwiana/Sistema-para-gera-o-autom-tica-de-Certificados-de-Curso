@@ -11,10 +11,6 @@ const list = [
 
 generatePdfCertificates(list);
 
-//fs.writeFileSync("certificado.html", renderedHTML, "utf8");
-
-//generatePDFs()
-
 
 
 
