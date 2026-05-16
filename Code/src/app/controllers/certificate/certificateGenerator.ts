@@ -8,7 +8,7 @@ import {Student} from "../../models/student";
 
 const templatePath : string = path.join(__dirname, 'template', 'html','templatev0.html');
 const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'temp_certificate.html');
-const outputPathPDF: string = path.join(__dirname, '..', '..', '..', 'output');
+export const outputPathPDF: string = path.join(__dirname, '..', '..', '..', 'output');
 const template = fs.readFileSync(templatePath, "utf8");
 
 export async function generatePdfCertificates(studentList: Student[]) {

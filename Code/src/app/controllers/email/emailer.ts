@@ -1,17 +1,48 @@
-import nodemailer from 'nodemailer'
+import nodemailer, {SendMailOptions} from 'nodemailer'
+import emailConfigs from "../../endpoints/emailConfigs";
+import {Student} from "../../models/student";
+import {getCertificateByStudent} from "../certificate/repositoryAccess";
 
 const configOptions = {
-    host: 'smtp.gmail.com',
+    host: emailConfigs.EmailHost,
     port: 587,
-    secure: true,
-    service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: emailConfigs.EmailUser,
+        pass: emailConfigs.EmailPassword,
     },
 };
 
 const transporter = nodemailer.createTransport(configOptions);
-export default transporter;
 
-console.log(process.env.EMAIL_USER)
+
+export const sendUserCertificateEmail = async (student: Student) => {
+    try {
+        const certificate = getCertificateByStudent(student);
+        if (certificate == null) {return}
+
+        const mailOptions: SendMailOptions = {
+            from: emailConfigs.EmailSender,
+            to: student.email,
+            subject: `Certificado ${student.name}!`,
+            html: `
+      <!DOCTYPE html>
+      <html>
+        <body>
+          <h1>O seu certificado for gerado com sucesso, ${student.name}!</h1>
+          <p>Em anexo, encontra-se o seu certificado do curso ${student.course.name}!</p>
+        </body>
+      </html>`,
+            attachments: [
+                {
+                    filename: `certificado_${student.id}.pdf`,
+                    content: certificate,
+                }
+            ]
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to ${student.email}!`);
+    } catch (error) {
+        console.error(`Error on sending email to ${student.email}: ${error}`);
+    }
+};
