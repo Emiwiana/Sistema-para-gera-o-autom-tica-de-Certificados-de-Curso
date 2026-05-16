@@ -19,10 +19,10 @@ export async function generatePdfCertificates(studentList: Student[]) {
 
     try {
         for (const student of studentList) {
-            generateTempHTML(student);                   // creates temp html certificate
-            const page = await browser.newPage(); // creates new empty page to put html in
-            await generatePDF(student, page)            // generates pdf file based on temp html
-            signCertificate(student);                   // TODO: sign the generated certificate
+            generateTempHTML(student);                    // creates temp html certificate
+            const page = await browser.newPage();  // creates new empty page to put html in
+            await generatePDF(student, page)             // generates pdf file based on temp html
+            signCertificate(student);                    // TODO: sign the generated certificate
         }
     } catch (error) {
         // @ts-ignore
@@ -51,7 +51,6 @@ async function generatePDF(student : Student, page:Page) {
         format: "A4",
         printBackground: true,
         preferCSSPageSize: true,
-        landscape: true,
         margin: {
             top: '0px',
             right: '0px',
@@ -64,7 +63,6 @@ async function generatePDF(student : Student, page:Page) {
 }
 
 function generateTempHTML(student : Student) {
-    //TODO Alterar lógica para usar classe estudante em vez de inputs da lista
     const renderedHTML = fillTemplate(template, student);
     fs.writeFileSync(tempCertificatePath, renderedHTML, "utf8");
 }
