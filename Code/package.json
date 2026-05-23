@@ -11,9 +11,10 @@
     "casbin": "^5.50.0",
     "dotenv": "^17.4.2",
     "handlebars": "^4.7.9",
-    "html2pdf-ts": "^1.2.23",
     "nodemailer": "^8.0.7",
-    "puppeteer": "^24.43.0"
+    "puppeteer": "^24.43.0",
+    "express": "^5.2.1",
+    "@types/express": "^5.0.6"
   },
   "devDependencies": {
     "@types/nodemailer": "^8.0.0",

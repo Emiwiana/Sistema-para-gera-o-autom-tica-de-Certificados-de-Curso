@@ -1,23 +1,21 @@
-/// <reference types="node" />
-//app to be launched through this file
-import {generatePdfCertificates} from "./controllers/certificate/certificateGenerator";
-import {Student} from "./models/student";
-import {Course} from "./models/course";
-import {sendUserCertificateEmail} from "./controllers/email/emailer";
+import express from 'express';
+import path from 'path';
+const routes = require('./routes');
 
-const leim = new Course(1101, "LEIM", "12-09-2023", "12-09-2023")
-const list = [
-    new Student(48155, "Nilo Duarte", "a51635@alunos.isel.pt", leim),
-    new Student(48156, "Maria Silva", "", leim),
-    new Student(48157, "João Pereira", "", leim)
-]
-
-//generatePdfCertificates(list);
-
-sendUserCertificateEmail(list[0])
+const app = express();
 
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, '../public')));
+console.log(path.join(__dirname, '../public'))
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
+app.use('/', routes);
 
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`App running on http://localhost:${PORT}`);
+});
