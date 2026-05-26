@@ -1,13 +1,18 @@
-class User {
-    id: number;
-    email: string;
-
-    constructor(id: number, email: string) {
-        this.id = id;
-        this.email = email;
-    }
+enum userRole {
+    ADMIN = 'ADMIN',
+    USER = 'USER',
 }
 
-function getUserByID(id: number) {
+class User {
+    id: number;
+    employeeName: string;
+    email: string;
+    role: userRole;
 
+    constructor(id: number, email: string, employeeName: string, role: userRole) {
+        this.id = id;
+        this.email = email;
+        this.employeeName = employeeName;
+        this.role = role;
+    }
 }
