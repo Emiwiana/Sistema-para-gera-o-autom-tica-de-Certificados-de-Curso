@@ -1,5 +1,5 @@
-import {Student} from "../../models/student";
-import {outputPathPDF} from "./certificateGenerator";
+import {Student} from "../../../model/student";
+import {outputPathPDF} from "../../../services/certificate/generator";
 import fs from "fs";
 
 

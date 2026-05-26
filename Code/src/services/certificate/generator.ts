@@ -3,7 +3,7 @@ import fs from "fs";
 import {pathToFileURL} from "node:url";
 import puppeteer, {Page} from "puppeteer";
 import Handlebars from "handlebars";
-import {Student} from "../../models/student";
+import {Student} from "../../model/student";
 
 
 const templatePath : string = path.join(__dirname, 'template', 'html','templatev0.html');

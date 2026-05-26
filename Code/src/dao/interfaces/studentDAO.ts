@@ -1,6 +1,4 @@
-//TODO: Código para criar um objecto do tipo 'student' a partir da BD
-
-import {Student} from "../models/student";
+import {Student} from "../../model/student";
 
 interface studentDAO {
     getStudentByID(id: number) : Student

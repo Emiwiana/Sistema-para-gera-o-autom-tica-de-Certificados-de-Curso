@@ -7,4 +7,5 @@ export default {
     EmailUser: process.env.EMAIL_USER,
     EmailPassword: process.env.EMAIL_PASSWORD,
     EmailSender: process.env.EMAIL_SENDER,
+
 }

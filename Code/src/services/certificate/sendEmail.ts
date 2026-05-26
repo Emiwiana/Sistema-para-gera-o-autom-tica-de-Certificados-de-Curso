@@ -1,7 +1,7 @@
 import nodemailer, {SendMailOptions} from 'nodemailer'
-import emailConfigs from "../../endpoints/emailConfigs";
-import {Student} from "../../models/student";
-import {getCertificateByStudent} from "../certificate/repositoryAccess";
+import emailConfigs from "../../configs/email";
+import {Student} from "../../model/student";
+import {getCertificateByStudent} from "../../dao/implementations/local/certificateDAO";
 
 const configOptions = {
     host: emailConfigs.EmailHost,
