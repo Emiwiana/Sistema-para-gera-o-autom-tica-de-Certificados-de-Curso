@@ -14,3 +14,8 @@ export async function validateCredentials(email: string, password: string): Prom
     }
     return null
 }
+
+function generateHashedPassword(password: string): string {
+    const hash = bcrypt.genSaltSync(10)
+    return bcrypt.hashSync(password, hash)
+}
