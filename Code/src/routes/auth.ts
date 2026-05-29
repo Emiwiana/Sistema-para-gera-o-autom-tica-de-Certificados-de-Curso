@@ -1,7 +1,7 @@
 const express = require('express');
 export const router = express.Router();
 
-import {showLogin, login, logout} from "../controllers/auth/authController";
+import {showLogin, login, logout} from "../controllers/auth/auth";
 
 router.get('/login', showLogin);
 router.post('/login', login);

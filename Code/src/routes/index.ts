@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import { router as authRoutes } from './authRoutes';
+import { router as authRoutes } from './auth';
 import { Course } from '../model/course';
 import { Student } from '../model/student';
 import { generatePdfCertificates, getCertificateFileName, outputPathPDF } from '../services/certificate/generator';

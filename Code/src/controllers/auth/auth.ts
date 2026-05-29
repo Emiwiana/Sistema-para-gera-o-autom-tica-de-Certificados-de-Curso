@@ -1,10 +1,5 @@
 import { Request, Response } from 'express';
-
-const demoCredentials = {
-    email: process.env.LOGIN_DEMO_EMAIL || 'admin@example.com',
-    password: process.env.LOGIN_DEMO_PASSWORD || 'admin123',
-    role: process.env.LOGIN_DEMO_ROLE || 'ADMIN',
-};
+import {validateCredentials} from "../../services/auth/auth";
 
 export function showLogin(req: Request, res: Response) {
     res.render('login', {
@@ -17,14 +12,16 @@ export function login(req: Request, res: Response) {
     const email = String(req.body?.email || '').trim();
     const password = String(req.body?.password || '');
 
-    if (email === demoCredentials.email && password === demoCredentials.password) {
-        res.cookie('demo_auth_user', email, {
+    const user = validateCredentials(email, password);
+
+    if (user != null) {
+        res.cookie('demo_auth_user', user.email, {
             httpOnly: true,
             sameSite: 'lax',
             maxAge: 60 * 60 * 1000,
         });
 
-        res.cookie('demo_auth_role', demoCredentials.role, {
+        res.cookie('demo_auth_role', user.role, {
             httpOnly: true,
             sameSite: 'lax',
             maxAge: 60 * 60 * 1000,

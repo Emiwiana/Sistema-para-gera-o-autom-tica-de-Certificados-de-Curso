@@ -6,7 +6,7 @@ enum userRole {
 class User {
     id: number;
     employeeName: string;
-    email: string;
+    email: String;
     role: userRole;
 
     constructor(id: number, email: string, employeeName: string, role: userRole) {
