@@ -1,14 +1,17 @@
+import path from "path";
 import {Student} from "../../../model/student";
-import {outputPathPDF} from "../../../services/certificate/generator";
+import {getCertificateFileName, outputPathPDF} from "../../../services/certificate/generator";
 import fs from "fs";
 
-
-const pdfLocation = outputPathPDF
-
 export function getCertificateByStudent(student : Student) {
-    const id = student.id;
     try {
-        return fs.createReadStream(outputPathPDF + `/certificado_${id}.pdf`, "utf8")
+        const filePath = path.join(outputPathPDF, getCertificateFileName(student));
+
+        if (!fs.existsSync(filePath)) {
+            return null;
+        }
+
+        return fs.readFileSync(filePath);
     } catch (error) {
         return null;
     }

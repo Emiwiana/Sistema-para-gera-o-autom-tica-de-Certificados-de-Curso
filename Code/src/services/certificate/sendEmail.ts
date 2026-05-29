@@ -2,6 +2,7 @@ import nodemailer, {SendMailOptions} from 'nodemailer'
 import emailConfigs from "../../configs/email";
 import {Student} from "../../model/student";
 import {getCertificateByStudent} from "../../dao/implementations/local/certificateDAO";
+import {getCertificateFileName} from "./generator";
 
 const configOptions = {
     host: emailConfigs.EmailHost,
@@ -34,7 +35,7 @@ export const sendUserCertificateEmail = async (student: Student) => {
       </html>`,
             attachments: [
                 {
-                    filename: `certificado_${student.id}.pdf`,
+                    filename: getCertificateFileName(student),
                     content: certificate,
                 }
             ]
