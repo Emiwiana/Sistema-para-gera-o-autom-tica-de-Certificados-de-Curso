@@ -14,18 +14,28 @@ const testUser = {
 const testCredential = {
     id: testUser.id,
     email: 'admin@example.com',
-    password: 'admin123'
+    password: '$2b$10$YSqNH5POiVP8/Zh24e20AuV7sAQ1KtC0o/kevrewWhVsxgVgoFxEK'
 }
 
 
 export class VariableUserDAO implements UserDAO {
-    getUserFromCredentials(email: string, password: string): User | null {
-        if (testCredential.password === password && testCredential.email === email) {
-            const id = testUser.id
-            const name = testUser.firstName + " " + testUser.lastName
-            const role = testUser.role
-            return new User(id, email, name, userRole[role as keyof typeof userRole])
+    getUser(email: string): User | null {
+        if (testCredential.email === email) {
+            const id = testCredential.id;
+            if (testUser.id === id) {
+                const name = testUser.firstName + " " + testUser.lastName;
+                const role = userRole[testUser.role as keyof typeof userRole];
+                return new User(id, email, name, role)
+            }
+        }
+        return null
+    }
+
+    getPassword(email: string): string | null {
+        if (testCredential.email === email) {
+            return testCredential.password;
         }
         return null;
     }
+
 }

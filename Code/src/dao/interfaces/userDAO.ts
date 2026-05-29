@@ -1,14 +1,22 @@
+import {User} from "../../model/user";
 
 
 export interface UserDAO {
     /**
-     * Searches the database to authenticate a user based on the login credentials
-     * if a user with a valid email/password combination is found, returns that user
-     * otherwise, returns null
+     * Searches the database to find stored user data. Returning null if no user with the
+     * given email was found.
      *
      * @param email user email
-     * @param password encrypted password
      * @returns: valid user, or null
      */
-    getUserFromCredentials (email: String, password: String) : User | null;
+    getUser (email: String) : User | null;
+
+    /**
+     * Searches database to find stored hashed password, returning
+     * null if no user with the given email was found.
+     *
+     * @param email
+     * @returns: existing hashed password or null
+     */
+    getPassword(email: string): string | null;
 }

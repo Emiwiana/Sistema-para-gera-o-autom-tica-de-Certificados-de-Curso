@@ -8,11 +8,11 @@ export function showLogin(req: Request, res: Response) {
     });
 }
 
-export function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response) {
     const email = String(req.body?.email || '').trim();
     const password = String(req.body?.password || '');
 
-    const user = validateCredentials(email, password);
+    const user = await validateCredentials(email, password);
 
     if (user != null) {
         res.cookie('demo_auth_user', user.email, {
