@@ -1,9 +1,9 @@
-enum userRole {
+export enum userRole {
     ADMIN = 'ADMIN',
     USER = 'USER',
 }
 
-class User {
+export class User {
     id: number;
     employeeName: string;
     email: String;

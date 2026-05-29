@@ -1,4 +1,6 @@
 import {UserDAO} from "../../interfaces/userDAO";
+import {User} from "../../../model/user";
+import {userRole} from "../../../model/user";
 
 //this class is just for tests, this method of saving users is too unsafe
 
