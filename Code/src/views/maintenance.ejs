@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Repository Maintenance</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+        .danger-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;}
+        .schedule-btn { background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;}
+        .form-inline { display: inline-flex; gap: 5px; align-items: center; }
+    </style>
+</head>
+<body>
+<h1>Repository Maintenance</h1>
+
+<div style="margin-bottom: 1rem;">
+    <strong>Sort by Age:</strong>
+    <a href="/admin/maintenance?sort=newest"><button>Newest First</button></a>
+    <a href="/admin/maintenance?sort=oldest"><button>Oldest First</button></a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>File Name</th>
+        <th>Created At</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (files.length === 0) { %>
+        <tr><td colspan="3">No certificates found.</td></tr>
+    <% } %>
+
+    <% files.forEach(function(file) { %>
+        <tr>
+            <td><%= file.fileName %></td>
+            <td><%= file.createdAt.toLocaleString() %></td>
+            <td>
+                <form action="/admin/maintenance/delete" method="POST" class="form-inline" onsubmit="return confirm('Delete this file permanently?');">
+                    <input type="hidden" name="fileName" value="<%= file.fileName %>">
+                    <button type="submit" class="danger-btn">Delete Now</button>
+                </form>
+
+                <form action="/admin/maintenance/schedule" method="POST" class="form-inline" style="margin-left: 10px;">
+                    <input type="hidden" name="fileName" value="<%= file.fileName %>">
+                    <input type="datetime-local" name="scheduledDate" required>
+                    <button type="submit" class="schedule-btn">Schedule</button>
+                </form>
+            </td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+
+<p><a href="/">Back to Dashboard</a></p>
+</body>
+</html>

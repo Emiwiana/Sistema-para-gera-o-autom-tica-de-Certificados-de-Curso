@@ -28,4 +28,9 @@ export class Student {
     public get course(): Course {
         return this._course;
     }
+
+    public get certificateFileName(): string {
+        return `certificado_curso_${this.course.id}_aluno_${this.id}.pdf`;
+    }
+
 }

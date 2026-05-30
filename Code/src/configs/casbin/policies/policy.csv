@@ -1,4 +1,8 @@
+p, USER, /, GET
 p, USER, /test-pdf, GET
-p, ADMIN, POST
+
+p, ADMIN, /admin/maintenance, GET
+p, ADMIN, /admin/maintenance/delete, POST
+p, ADMIN, /admin/maintenance/schedule, POST
 
 g, ADMIN, USER

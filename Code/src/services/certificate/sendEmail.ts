@@ -1,8 +1,7 @@
 import nodemailer, {SendMailOptions} from 'nodemailer'
 import emailConfigs from "../../configs/email";
 import {Student} from "../../model/student";
-import {getCertificateByStudent} from "../../dao/implementations/local/certificateDAO";
-import {getCertificateFileName} from "./generator";
+import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
 
 const configOptions = {
     host: emailConfigs.EmailHost,
@@ -14,11 +13,11 @@ const configOptions = {
 };
 
 const transporter = nodemailer.createTransport(configOptions);
-
+const dao = new CertificateDAO()
 
 export const sendUserCertificateEmail = async (student: Student) => {
     try {
-        const certificate = getCertificateByStudent(student);
+        const certificate = dao.getCertificateByStudent(student);
         if (certificate == null) {return}
 
         const mailOptions: SendMailOptions = {
@@ -35,8 +34,8 @@ export const sendUserCertificateEmail = async (student: Student) => {
       </html>`,
             attachments: [
                 {
-                    filename: getCertificateFileName(student),
-                    content: certificate,
+                    //filename: student.certificateFileName,
+                    //content: certificate,
                 }
             ]
         };

@@ -3,7 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { Course } from '../model/course';
 import { Student } from '../model/student';
-import { generatePdfCertificates, getCertificateFileName, outputPathPDF } from '../services/certificate/generator';
+import { generatePdfCertificates} from '../services/certificate/generator';
+import {CertificateRepositoryDir} from "../configs/localRepository";
 
 // Move the mock data here for now
 const sampleCourse = new Course(101, 'Curso de Teste', '2025-01-01', '2025-06-30');
@@ -16,11 +17,11 @@ export const generateTestPdfs = async (req: Request, res: Response) => {
         await generatePdfCertificates(sampleStudents);
 
         const generatedFiles = sampleStudents.map((student) => {
-            const fileName = getCertificateFileName(student);
+            const fileName = student.certificateFileName;
             return {
                 fileName,
                 url: `/generated/${fileName}`,
-                exists: fs.existsSync(path.join(outputPathPDF, fileName)),
+                exists: fs.existsSync(path.join(CertificateRepositoryDir, fileName)),
             };
         });
 

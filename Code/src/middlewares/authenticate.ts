@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const requireAuth = (req: any, res: any, next: NextFunction) => {
+export const authenticate = (req: any, res: any, next: NextFunction) => {
     const userEmail = req.cookies?.demo_auth_user;
 
     if (!userEmail) {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import {getEnforcer} from "../configs/casbin/casbin";
 
-export const policyEnforce = async (req: Request, res: Response, next: NextFunction) => {
+export const authorize = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userRole = (req as any).user?.role;
 
@@ -9,11 +9,11 @@ export const policyEnforce = async (req: Request, res: Response, next: NextFunct
             return res.status(401).json({ error: 'Unauthorized: User role not found.' });
         }
 
-        const path = req.path;
+        const fullPath = req.originalUrl.split('?')[0];
         const method = req.method;
 
         const enforcer = await getEnforcer();
-        const isAllowed = await enforcer.enforce(userRole, path, method);
+        const isAllowed = await enforcer.enforce(userRole, fullPath, method);
 
         if (isAllowed) {
             next();

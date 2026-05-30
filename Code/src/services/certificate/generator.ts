@@ -4,19 +4,16 @@ import {pathToFileURL} from "node:url";
 import puppeteer, {Page} from "puppeteer";
 import Handlebars from "handlebars";
 import {Student} from "../../model/student";
+import {CertificateRepositoryDir} from "../../configs/localRepository";
 
 
 const templatePath : string = path.join(__dirname, 'template', 'html','templatev0.html');
 const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'temp_certificate.html');
-export const outputPathPDF: string = path.join(__dirname, '..', '..', '..', 'output');
 
-export function getCertificateFileName(student: Student): string {
-    return `certificado_curso_${student.course.id}_aluno_${student.id}.pdf`;
-}
 const template = fs.readFileSync(templatePath, "utf8");
 
 export async function generatePdfCertificates(studentList: Student[]) {
-    fs.mkdirSync(outputPathPDF, { recursive: true });
+    fs.mkdirSync(CertificateRepositoryDir, { recursive: true });
 
     //starts puppeteer
     const browser = await puppeteer.launch({
@@ -43,8 +40,8 @@ export async function generatePdfCertificates(studentList: Student[]) {
 
 async function generatePDF(student : Student, page:Page) {
 
-    const fileName: string = getCertificateFileName(student);
-    const fullOutputPath = path.join(outputPathPDF, fileName);
+    const fileName: string = student.certificateFileName;
+    const fullOutputPath = path.join(CertificateRepositoryDir, fileName);
     const fileUrl = pathToFileURL(path.resolve(tempCertificatePath)).href;
 
     await page.goto(fileUrl, {

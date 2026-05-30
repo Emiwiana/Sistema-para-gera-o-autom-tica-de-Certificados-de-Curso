@@ -1,7 +1,9 @@
 import express from 'express';
 import { router as authRoutes } from './auth';
-import { policyEnforce } from '../middlewares/policyEnforce';
-import { requireAuth } from '../middlewares/requireAuth';
+import {router as repositoryRoutes} from './localRepository'
+
+import { authorize } from '../middlewares/authorize';
+import { authenticate } from '../middlewares/authenticate';
 import { generateTestPdfs } from '../controllers/certificate';
 import {showDashboard} from "../controllers/dashboard";
 
@@ -11,7 +13,9 @@ export const router = express.Router();
 router.use('/auth', authRoutes);
 
 // Protected routes
-router.get('/', requireAuth, showDashboard);
-router.get('/test-pdf', requireAuth, policyEnforce, generateTestPdfs);
+router.get('/', authenticate, showDashboard);
+router.get('/test-pdf', authenticate, authorize, generateTestPdfs);
+router.use('/admin', repositoryRoutes)
+
 
 module.exports = router;
