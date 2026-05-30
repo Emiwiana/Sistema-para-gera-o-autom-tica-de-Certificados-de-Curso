@@ -1,4 +1,4 @@
-import {UserDAO} from "../../interfaces/userDAO";
+import {IUserDAO} from "../../interfaces/IUserDAO";
 import {User} from "../../../model/user";
 import {userRole} from "../../../model/user";
 
@@ -34,7 +34,7 @@ const testUsers = [testAdmin, testUser]
 const testCredentials = [testAdminCredential, testUserCredential]
 
 
-export class VariableUserDAO implements UserDAO {
+export class VariableUserDAO implements IUserDAO {
     getUser(email: string): User | null {
         for (const credential in testCredentials) {
             if (testCredentials[credential].email === email) {

@@ -1,9 +1,9 @@
 import {VariableUserDAO} from "../../dao/implementations/variableUnsafe/variableUserDAO";
 import * as bcrypt from 'bcrypt-ts'
 import {User} from "../../model/user";
-import {UserDAO} from "../../dao/interfaces/userDAO";
+import {IUserDAO} from "../../dao/interfaces/IUserDAO";
 
-const dao: UserDAO = new VariableUserDAO()
+const dao: IUserDAO = new VariableUserDAO()
 
 export async function validateCredentials(email: string, password: string): Promise<User | null> {
     const hashedPassword = dao.getPassword(email)

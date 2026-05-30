@@ -1,7 +1,7 @@
 import {User} from "../../model/user";
 
 
-export interface UserDAO {
+export interface IUserDAO {
     /**
      * Searches the database to find stored user data. Returning null if no user with the
      * given email was found.

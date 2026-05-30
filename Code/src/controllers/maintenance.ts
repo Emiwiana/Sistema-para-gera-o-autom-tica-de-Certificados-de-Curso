@@ -3,7 +3,7 @@ import {getSortedCertificates, deleteCertificate} from "../services/maintenance/
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
     const sortOrder = req.query.sort === 'oldest' ? 'oldest' : 'newest';
-    const files = getSortedCertificates(sortOrder);
+    const files = await getSortedCertificates(sortOrder);
 
     res.render('maintenance', { files, sortOrder });
 };

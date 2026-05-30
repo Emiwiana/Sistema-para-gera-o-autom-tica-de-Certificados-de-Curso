@@ -1,10 +1,9 @@
 import express from 'express';
 import { router as authRoutes } from './auth';
-import {router as repositoryRoutes} from './maintenance'
+import {router as maintenanceRoutes} from './maintenance'
+import {router as certificateRoutes} from './certificates'
 
-import { authorize } from '../middlewares/authorize';
 import { authenticate } from '../middlewares/authenticate';
-import { generateTestPdfs } from '../controllers/certificate';
 import {showDashboard} from "../controllers/dashboard";
 
 export const router = express.Router();
@@ -14,8 +13,7 @@ router.use('/auth', authRoutes);
 
 // Protected routes
 router.get('/', authenticate, showDashboard);
-router.get('/test-pdf', authenticate, authorize, generateTestPdfs);
-router.use('/admin', repositoryRoutes)
-
+router.use('/admin', maintenanceRoutes)
+router.use('/certificates', certificateRoutes)
 
 module.exports = router;

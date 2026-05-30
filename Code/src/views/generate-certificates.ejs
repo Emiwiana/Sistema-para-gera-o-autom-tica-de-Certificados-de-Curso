@@ -2,29 +2,76 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>PDF Generation Test</title>
+    <title>Generate Certificates</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; }
-        .card { max-width: 760px; padding: 1.5rem; border: 1px solid #ccc; border-radius: 10px; }
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .card { max-width: 800px; margin: auto; padding: 1.5rem; border: 1px solid #ccc; border-radius: 10px; }
+        .filter-bar { margin-bottom: 2rem; padding: 1rem; background: #f9f9f9; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .success { color: green; font-weight: bold; margin-bottom: 1rem; }
+        button { padding: 8px 16px; cursor: pointer; }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>PDF Generation Test</h1>
-    <p>5 sample PDFs were generated in one batch.</p>
-    <ul>
-        <% generatedFiles.forEach(function(file) { %>
-            <li>
-                <%= file.fileName %> —
-                <% if (file.exists) { %>
-                    <a href="<%= file.url %>">Open PDF</a>
-                <% } else { %>
-                    not generated
-                <% } %>
-            </li>
-        <% }); %>
-    </ul>
-    <p><a href="/">Back to homepage</a></p>
+    <h1>Generate Certificates</h1>
+    <p><a href="/">Back to Dashboard</a></p>
+
+    <% if (successMessage) { %> <div class="success"><%= successMessage %></div> <% } %>
+
+    <div class="filter-bar">
+        <form action="/certificates/generate" method="GET">
+            <label>Course:</label>
+            <select name="courseId">
+                <option value="">All Courses</option>
+                <% courses.forEach(course => { %>
+                    <option value="<%= course.id %>" <%= filters.courseId === course.id ? 'selected' : '' %>>
+                        <%= course.name %>
+                    </option>
+                <% }) %>
+            </select>
+
+            <label style="margin-left: 10px;">Year:</label>
+            <input type="number" name="year" placeholder="e.g., 2024" value="<%= filters.year || '' %>">
+
+            <button type="submit" style="margin-left: 10px;">Apply Filters</button>
+            <a href="/certificates/generate" style="margin-left: 10px;">Clear</a>
+        </form>
+    </div>
+
+    <form action="/certificates/generate" method="POST">
+        <table>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Course</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% if (students.length === 0) { %>
+                <tr><td colspan="4">No eligible students found.</td></tr>
+            <% } %>
+
+            <% students.forEach(student => { %>
+                <tr>
+                    <td><input type="checkbox" name="studentIds" value="<%= student.id %>"></td>
+                    <td><%= student.name %></td>
+                    <td><%= student.email %></td>
+                    <td><%= student.course.name %></td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+
+        <% if (students.length > 0) { %>
+            <button type="submit" style="background: #28a745; color: white; border: none; border-radius: 5px;">
+                Generate Selected Certificates
+            </button>
+        <% } %>
+    </form>
 </div>
 </body>
 </html>
