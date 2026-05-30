@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import {validateCredentials} from "../../services/auth/auth";
+import {validateCredentials} from "../services/auth/auth";
 
 export function showLogin(req: Request, res: Response) {
     res.render('login', {

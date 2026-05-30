@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { Course } from '../../model/course';
-import { Student } from '../../model/student';
-import { generatePdfCertificates, getCertificateFileName, outputPathPDF } from '../../services/certificate/generator';
+import { Course } from '../model/course';
+import { Student } from '../model/student';
+import { generatePdfCertificates, getCertificateFileName, outputPathPDF } from '../services/certificate/generator';
 
 // Move the mock data here for now
 const sampleCourse = new Course(101, 'Curso de Teste', '2025-01-01', '2025-06-30');
@@ -30,6 +30,3 @@ export const generateTestPdfs = async (req: Request, res: Response) => {
     }
 };
 
-export const showDashboard = (req: Request, res: Response) => {
-    res.render('index');
-};

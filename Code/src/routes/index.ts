@@ -2,7 +2,8 @@ import express from 'express';
 import { router as authRoutes } from './auth';
 import { policyEnforce } from '../middlewares/policyEnforce';
 import { requireAuth } from '../middlewares/requireAuth';
-import { generateTestPdfs, showDashboard } from '../controllers/certificate/certificate';
+import { generateTestPdfs } from '../controllers/certificate';
+import {showDashboard} from "../controllers/dashboard";
 
 export const router = express.Router();
 
