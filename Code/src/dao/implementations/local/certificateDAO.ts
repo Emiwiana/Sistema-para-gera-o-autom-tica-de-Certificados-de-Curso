@@ -46,5 +46,15 @@ export class CertificateDAO {
             return false;
         }
     }
+
+    async getCertificateByName(fileName: string) {
+        try {
+            const filePath = path.join(CertificateRepositoryDir, fileName);
+            return fs.readFile(filePath);
+        } catch (error) {
+            return null;
+        }
+
+    }
 }
 

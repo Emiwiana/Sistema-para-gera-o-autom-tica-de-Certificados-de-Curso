@@ -1,34 +1,21 @@
 import { Request, Response } from 'express';
-import {CertificateDAO} from "../dao/implementations/local/certificateDAO";
-
-
-const dao = new CertificateDAO();
+import {getSortedCertificates, deleteCertificate} from "../services/maintenance/maintenance";
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
     const sortOrder = req.query.sort === 'oldest' ? 'oldest' : 'newest';
-
-    let files = await dao.getAllCertificates();
-
-    // Sort the files by age
-    files.sort((a, b) => {
-        if (sortOrder === 'oldest') {
-            return a.timestamp - b.timestamp; // Ascending
-        } else {
-            return b.timestamp - a.timestamp; // Descending
-        }
-    });
+    const files = getSortedCertificates(sortOrder);
 
     res.render('maintenance', { files, sortOrder });
 };
 
-export const deleteCertificate = async (req: Request, res: Response) => {
+export const deleteNow = async (req: Request, res: Response) => {
     const { fileName } = req.body;
 
     if (!fileName) {
         return res.status(400).send("Filename is required");
     }
 
-    const success = await dao.deleteCertificate(fileName);
+    const success = await deleteCertificate(fileName);
 
     if (success) {
         // Redirect back to the maintenance page to see the updated list

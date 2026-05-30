@@ -1,6 +1,6 @@
 import express from 'express';
 import { router as authRoutes } from './auth';
-import {router as repositoryRoutes} from './localRepository'
+import {router as repositoryRoutes} from './maintenance'
 
 import { authorize } from '../middlewares/authorize';
 import { authenticate } from '../middlewares/authenticate';
