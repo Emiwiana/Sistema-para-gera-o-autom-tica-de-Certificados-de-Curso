@@ -43,7 +43,7 @@ export class VariableUserDAO implements UserDAO {
                     if (testUsers[user].id === id) {
                         const name = testUsers[user].firstName + " " + testUsers[user].lastName;
                         const role = testUsers[user].role as keyof typeof userRole;
-                        return new User(id, email, name, <userRole>role)
+                        return new User(id, email, name, <userRole>role);
                     }
                 }
             }

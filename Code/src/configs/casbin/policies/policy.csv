@@ -1,4 +1,4 @@
 p, USER, /test-pdf, GET
-p, ADMIN, /users, POST
+p, ADMIN, POST
 
 g, ADMIN, USER
