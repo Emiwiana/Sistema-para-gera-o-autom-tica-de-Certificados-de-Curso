@@ -31,7 +31,7 @@ export async function login(req: Request, res: Response) {
     }
 
     return res.render('login', {
-        errorMessage: 'Credenciais inválidas. Tenta admin@example.com / admin123.',
+        errorMessage: 'Credenciais inválidas. Tenta admin@example.com / admin123 ou user@example.com / admin123.',
         successMessage: null,
     });
 }
