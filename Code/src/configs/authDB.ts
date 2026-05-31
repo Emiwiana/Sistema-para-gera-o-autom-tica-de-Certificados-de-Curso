@@ -1,12 +1,25 @@
 import mysql from 'mysql2/promise';
 
+let poolInstance: mysql.Pool | null = null;
 
-export const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+//this is dumb, but if I don't do it this way, this method is instantiated
+//BEFORE .env is loaded, meaning we don't have any variables for the database
+//for some reason
+//So I guess pool is a function instead of a variable now, to force it to only load
+//configs the first time it's called
+export const pool = (): mysql.Pool => {
+    // The pool is only instantiated the first time this function is called
+    if (!poolInstance) {
+        poolInstance = mysql.createPool({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
+        });
+    }
+    console.log(process.env.DB_NAME);
+    return poolInstance;
+};

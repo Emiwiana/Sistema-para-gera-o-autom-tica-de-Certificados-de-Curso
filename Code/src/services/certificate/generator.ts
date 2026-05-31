@@ -12,29 +12,32 @@ const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'te
 
 const template = fs.readFileSync(templatePath, "utf8");
 
-export async function generatePdfCertificates(studentList: Student[]) {
+export async function generatePdfCertificates(students: Student[]) {
     fs.mkdirSync(CertificateRepositoryDir, { recursive: true });
 
     //starts puppeteer
     const browser = await puppeteer.launch({
-        headless: true
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
     });
+    const batchSize = 5;
 
-    try {
-        for (const student of studentList) {
-            generateTempHTML(student);                    // creates temp html certificate
-            const page = await browser.newPage();  // creates new empty page to put html in
-            await generatePDF(student, page)             // generates pdf file based on temp html
-            signCertificate(student);                    // TODO: sign the generated certificate
-        }
-    } catch (error) {
-        // @ts-ignore
-        console.log(error.stack);
-    }
-    finally {
-        //Closes Puppeteer and deletes temp html file
-        fs.unlink(tempCertificatePath, (err) => {})
-        await browser.close();
+    for (let i = 0; i < students.length; i += batchSize) {
+        const batch = students.slice(i, i + batchSize);
+        await Promise.all(batch.map(async (student) => {
+            const page = await browser.newPage();
+
+            try {
+                generateTempHTML(student);                    // creates temp html certificate
+                await generatePDF(student, page)             // generates pdf file based on temp html
+                signCertificate(student);                    // TODO: sign the generated certificate
+            } catch (err) {
+                console.error(`Failed to generate for ${student.name}:`, err);
+            } finally {
+                fs.unlink(tempCertificatePath, (err) => {})
+                await page.close();
+            }
+        }));
     }
 }
 

@@ -29,7 +29,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool.execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await pool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
@@ -56,7 +56,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool.execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await pool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
