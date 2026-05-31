@@ -13,24 +13,28 @@ const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'te
 const template = fs.readFileSync(templatePath, "utf8");
 
 export async function generatePdfCertificates(students: Student[]) {
+    //ensures directory exists
     fs.mkdirSync(CertificateRepositoryDir, { recursive: true });
 
     //starts puppeteer
     const browser = await puppeteer.launch({
         headless: true,
+        //disable needless UI features
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
     });
-    const batchSize = 5;
 
+    //process certificates in batches
+    const batchSize = 5;
     for (let i = 0; i < students.length; i += batchSize) {
         const batch = students.slice(i, i + batchSize);
+
         await Promise.all(batch.map(async (student) => {
             const page = await browser.newPage();
 
             try {
-                generateTempHTML(student);                    // creates temp html certificate
-                await generatePDF(student, page)             // generates pdf file based on temp html
-                signCertificate(student);                    // TODO: sign the generated certificate
+                await generateTempHTML(student);                   // creates temp html certificate
+                await generatePDF(student, page);                  // generates pdf file based on temp html
+                await signCertificate(student);                    // TODO: sign the generated certificate
             } catch (err) {
                 console.error(`Failed to generate for ${student.name}:`, err);
             } finally {
@@ -68,7 +72,7 @@ async function generatePDF(student : Student, page:Page) {
     console.log(`PDF Generated for ${student.name}: ${fileName}`);
 }
 
-function generateTempHTML(student : Student) {
+async function generateTempHTML(student : Student) {
     const renderedHTML = fillTemplate(template, student);
     fs.writeFileSync(tempCertificatePath, renderedHTML, "utf8");
 }
@@ -84,6 +88,6 @@ function fillTemplate(template: any, student: Student) {
         data_fim: student.course.endDate, });
 }
 
-function signCertificate(student : any) : void {
+async function signCertificate(student : Student)  {
     //TODO: Lógica de assinar o certificado
 }
