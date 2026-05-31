@@ -1,14 +1,13 @@
+import * as dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
-const routes = require('./routes');
+dotenv.config({path: '../.env'});
 
-dotenv.config()
-
+//@ts-ignore, the IDE complains there's no actual routes object since we're importing the whole folder
+import routes from './routes';
 const app = express();
-
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))

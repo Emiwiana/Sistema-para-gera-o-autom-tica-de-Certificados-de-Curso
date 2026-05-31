@@ -1,3 +1,4 @@
+DROP DATABASE SysAuth;
 CREATE DATABASE IF NOT EXISTS SysAuth;
 USE SysAuth;
 
@@ -5,7 +6,7 @@ CREATE TABLE Employees (
     EmployeeID INT UNSIGNED NOT NULL AUTO_INCREMENT,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
-    Role ENUM('USER', 'ADMIN') NOT NULL,
+    Role ENUM ('USER', 'ADMIN') NOT NULL,
     PRIMARY KEY (EmployeeID)
 );
 

@@ -9,7 +9,7 @@ export interface IUserDAO {
      * @param email user email
      * @returns: valid user, or null
      */
-    getUser (email: String) : User | null;
+    getUser (email: String) : Promise<User | null>;
 
     /**
      * Searches database to find stored hashed password, returning
@@ -18,5 +18,5 @@ export interface IUserDAO {
      * @param email
      * @returns: existing hashed password or null
      */
-    getPassword(email: string): string | null;
+    getPassword(email: string): Promise<string | null>;
 }

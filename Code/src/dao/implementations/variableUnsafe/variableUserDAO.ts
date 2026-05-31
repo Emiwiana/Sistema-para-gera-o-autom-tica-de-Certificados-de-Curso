@@ -35,7 +35,7 @@ const testCredentials = [testAdminCredential, testUserCredential]
 
 
 export class VariableUserDAO implements IUserDAO {
-    getUser(email: string): User | null {
+    async getUser(email: string): Promise<User | null> {
         for (const credential in testCredentials) {
             if (testCredentials[credential].email === email) {
                 const id = testCredentials[credential].id;
@@ -51,7 +51,7 @@ export class VariableUserDAO implements IUserDAO {
         return null;
     }
 
-    getPassword(email: string): string | null {
+    async getPassword(email: string): Promise<string | null> {
         for (const credential in testCredentials) {
             if (testCredentials[credential].email === email) {
                 return testCredentials[credential].password;
