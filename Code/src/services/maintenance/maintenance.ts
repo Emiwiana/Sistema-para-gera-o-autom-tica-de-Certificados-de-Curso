@@ -17,8 +17,14 @@ export async function getSortedCertificates(sortOrder: string) {
     return files;
 }
 
-export async function deleteCertificate(fileName: string) {
-    return await dao.deleteCertificate(fileName);
+export async function deleteCertificates(certificates: Promise<any>): Promise<boolean> {
+    for (const file of await certificates) {
+        if (await dao.deleteCertificate(file.fileName)) {
+            console.log('Deleted file', file.fileName);
+        }
+        else return false;
+    }
+    return true;
 }
 
 function extractStudentNumber(fileName: string) {
@@ -57,12 +63,10 @@ export async function sortCertificatesByStudentNumber(sortOrder: string) {
 export async function getCertificateBeforeStudentNumber(studentNumber: string) {
     const files = await sortCertificatesByStudentNumber('increasing'); // Get files sorted by student number
     const cutoff = parseInt(studentNumber, 10);
-    const filesToDelete = files.filter(file => {
+    return files.filter(file => {
         const fileStudentNumber = extractStudentNumber(file.fileName);
         return !Number.isNaN(fileStudentNumber) && fileStudentNumber < cutoff;
     });
-
-    return filesToDelete;
 }
 
 export async function getCertificatesByCourse(courseId: number | string) {

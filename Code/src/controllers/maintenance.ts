@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import {getSortedCertificates, sortCertificatesByStudentNumber, deleteCertificate, getCertificateBeforeDate, getCertificateBeforeStudentNumber, getCertificatesByCourse} from "../services/maintenance/maintenance";
+import {
+    getSortedCertificates,
+    sortCertificatesByStudentNumber,
+    deleteCertificates, getCertificateBeforeDate, getCertificateBeforeStudentNumber, getCertificatesByCourse
+} from "../services/maintenance/maintenance";
 import { getFiltersData } from '../services/certificate/certificates';
 
 
@@ -34,23 +38,6 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     res.render('maintenance', { files, sortOrder, courses, selectedCourseId: courseIdQuery });
 };
 
-export const deleteNow = async (req: Request, res: Response) => {
-    const { fileName } = req.body;
-
-    if (!fileName) {
-        return res.status(400).send("Filename is required");
-    }
-
-    const success = await deleteCertificate(fileName);
-
-    if (success) {
-        // Redirect back to the maintenance page to see the updated list
-        res.redirect('/admin/maintenance');
-    } else {
-        res.status(500).send("Failed to delete file");
-    }
-};
-
 export const scheduleDeletion = async (req: Request, res: Response) => {
     const { fileName, scheduledDate } = req.body;
 
@@ -61,32 +48,43 @@ export const scheduleDeletion = async (req: Request, res: Response) => {
     res.redirect('/admin/maintenance');
 };
 
-export const deleteBeforeDate = async (req: Request, res: Response) => {
-    const { deleteBeforeDate } = req.body;
-    const files = await getCertificateBeforeDate(deleteBeforeDate);
-    for (const file of files) {
-        await deleteCertificate(file.fileName);
-    }
-    console.log(`Deleted files before ${deleteBeforeDate}:`, files.map(f => f.fileName));
-    res.redirect('/admin/maintenance');
+const createDeletionController = (
+    paramName: string,
+    getCertificatesFn: (param: any) => Promise<any>) => {
+    return async (req: Request, res: Response) => {
+        const paramValue = req.body[paramName];
+
+        if (!paramValue) {
+            return res.status(400).send(`${paramName} is required`);
+        }
+
+        const certificates = await getCertificatesFn(paramValue);
+        const success = await deleteCertificates(certificates);
+        if (success) {
+            res.redirect('/admin/maintenance');
+        } else {
+            res.status(500).send("Failed to delete file(s)");
+        }
+    };
 };
 
-export const deleteCertificateBeforeStudentNumber = async (req: Request, res: Response) => {
-    const { studentNumber } = req.body;
-    const files = await getCertificateBeforeStudentNumber(studentNumber);
-    for (const file of files) {
-        await deleteCertificate(file.fileName);
-    }
-    console.log(`Deleted files before student number ${studentNumber}:`, files.map(f => f.fileName));
-    res.redirect('/admin/maintenance');
-};
+export const deleteNow = createDeletionController(
+    'fileName',
+    // We instantly return the single file in an array to satisfy the factory's flow
+    async (fileName: string) => [{ fileName }]
+);
 
-export const deleteCertificatesByCourse = async (req: Request, res: Response) => {
-    const { courseId } = req.body;
-    if (!courseId) return res.status(400).send('courseId is required');
-    const files = await getCertificatesByCourse(courseId);
-    for (const file of files) {
-        await deleteCertificate(file.fileName);
-    }
-    res.redirect('/admin/maintenance');
-};
+export const deleteBeforeDate = createDeletionController(
+    'deleteBeforeDate',
+    getCertificateBeforeDate
+);
+
+export const deleteBeforeStudentNumber = createDeletionController(
+    'studentNumber',
+    getCertificateBeforeStudentNumber
+);
+
+export const deleteByCourse = createDeletionController(
+    'courseId',
+    getCertificatesByCourse
+);
