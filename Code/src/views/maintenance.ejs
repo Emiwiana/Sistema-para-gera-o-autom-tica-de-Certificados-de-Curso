@@ -15,30 +15,71 @@
 <body>
 <h1>Repository Maintenance</h1>
 
-<div style="margin-bottom: 1rem;">
-    <strong>Sort by Age:</strong>
-    <a href="/admin/maintenance?sort=newest"><button>Newest First</button></a>
-    <a href="/admin/maintenance?sort=oldest"><button>Oldest First</button></a>
-</div>
-<div style="margin-bottom: 1rem;">
-    <strong>Sort by Student Number:</strong>
-    <a href="/admin/maintenance?sort=increasing"><button>Increasing</button></a>
-    <a href="/admin/maintenance?sort=decreasing"><button>Decreasing</button></a>
-</div>
-<div style="margin-bottom: 1 rem">
-    <Strong> Delete All Before Date:</Strong>
-    <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
-        <input type="datetime-local" name="deleteBeforeDate" required>
-        <button type="submit" class="danger-btn">Delete All</button>
-    </form>
-</div>
-<div style="margin-bottom: 1rem;">
-    <Strong> Delete All Before Student Number:</Strong>
-    <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
-        <input type="number" name="studentNumber" placeholder="Enter student number" required>
-        <button type="submit" class="danger-btn">Delete All</button>
-    </form>
-</div>
+<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
+    <h2 style="margin-top:0;">Age</h2>
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+        <div>
+            <strong>Sort by Age:</strong>
+            <a href="/admin/maintenance?sort=newest"><button>Newest First</button></a>
+            <a href="/admin/maintenance?sort=oldest"><button>Oldest First</button></a>
+        </div>
+        <div>
+            <strong>Delete All Before Date:</strong>
+            <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
+                <input type="datetime-local" name="deleteBeforeDate" required>
+                <button type="submit" class="danger-btn">Delete All</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
+    <h2 style="margin-top:0;">Student Number</h2>
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+        <div>
+            <strong>Sort by Student Number:</strong>
+            <a href="/admin/maintenance?sort=increasing"><button>Increasing</button></a>
+            <a href="/admin/maintenance?sort=decreasing"><button>Decreasing</button></a>
+        </div>
+        <div>
+            <strong>Delete All Before Student Number:</strong>
+            <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
+                <input type="number" name="studentNumber" placeholder="Enter student number" required>
+                <button type="submit" class="danger-btn">Delete All</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
+    <h2 style="margin-top:0;">Course</h2>
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+        <div>
+            <form action="/admin/maintenance" method="GET" class="form-inline">
+                <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
+                <select name="courseId">
+                    <option value="">All Courses</option>
+                    <% (courses || []).forEach(function(course) { %>
+                        <option value="<%= course.id %>" <%= String(selectedCourseId||'') === String(course.id) ? 'selected' : '' %>><%= course.name %></option>
+                    <% }); %>
+                </select>
+                <button type="submit" style="margin-left:8px;">Apply</button>
+            </form>
+        </div>
+        <div>
+            <strong>Delete All By Course:</strong>
+            <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
+                <select name="courseId" required>
+                    <option value="">Select course</option>
+                    <% (courses || []).forEach(function(course) { %>
+                        <option value="<%= course.id %>"><%= course.name %></option>
+                    <% }); %>
+                </select>
+                <button type="submit" class="danger-btn" style="margin-left:8px;">Delete All</button>
+            </form>
+        </div>
+    </div>
+</section>
 
 <table>
     <thead>

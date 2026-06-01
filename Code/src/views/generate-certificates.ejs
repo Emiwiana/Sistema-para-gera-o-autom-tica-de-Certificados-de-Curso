@@ -44,7 +44,7 @@
         <table>
             <thead>
             <tr>
-                <th>Select</th>
+                <th><input type="checkbox" id="selectAll" title="Select all filtered students"></th>
                 <th>Student Name</th>
                 <th>Email</th>
                 <th>Course</th>
@@ -73,5 +73,15 @@
         <% } %>
     </form>
 </div>
+<script>
+    (function(){
+        const selectAll = document.getElementById('selectAll');
+        if (!selectAll) return;
+        selectAll.addEventListener('change', (e) => {
+            const checked = e.target.checked;
+            document.querySelectorAll('input[name="studentIds"]').forEach(cb => cb.checked = checked);
+        });
+    })();
+</script>
 </body>
 </html>

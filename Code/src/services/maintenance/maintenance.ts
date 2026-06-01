@@ -28,6 +28,13 @@ function extractStudentNumber(fileName: string) {
     return parseInt(numberPart, 10);
 }
 
+function extractCourseId(fileName: string) {
+    const parts = fileName.split('_');
+    // pattern: certificado_curso_{courseId}_aluno_{studentId}.pdf
+    const coursePart = parts[2] ?? '';
+    return parseInt(String(coursePart), 10);
+}
+
 export async function sortCertificatesByStudentNumber(sortOrder: string) {
     let files = await dao.getAllCertificates();
     files.sort((a, b) => {
@@ -57,6 +64,18 @@ export async function getCertificateBeforeStudentNumber(studentNumber: string) {
 
     return filesToDelete;
 }
+
+export async function getCertificatesByCourse(courseId: number | string) {
+    const cutoff = parseInt(String(courseId), 10);
+    if (Number.isNaN(cutoff)) return [];
+
+    const files = await dao.getAllCertificates();
+    return files.filter(f => {
+        const cid = extractCourseId(f.fileName);
+        return !Number.isNaN(cid) && cid === cutoff;
+    });
+}
+
 
 export async function getCertificateBeforeDate(date: string | Date) {
     let cutoff: Date;

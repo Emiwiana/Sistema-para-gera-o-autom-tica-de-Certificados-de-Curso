@@ -7,5 +7,6 @@ p, ADMIN, /admin/maintenance/delete, POST
 p, ADMIN, /admin/maintenance/schedule, POST
 p, ADMIN, /admin/maintenance/delete-before, POST
 p, ADMIN, /admin/maintenance/delete-before-student-number, POST
+p, ADMIN, /admin/maintenance/delete-by-course, POST
 
 g, ADMIN, USER

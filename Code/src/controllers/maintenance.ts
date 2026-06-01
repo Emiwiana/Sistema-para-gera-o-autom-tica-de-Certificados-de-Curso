@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
-import {getSortedCertificates, sortCertificatesByStudentNumber, deleteCertificate, getCertificateBeforeDate, getCertificateBeforeStudentNumber} from "../services/maintenance/maintenance";
+import {getSortedCertificates, sortCertificatesByStudentNumber, deleteCertificate, getCertificateBeforeDate, getCertificateBeforeStudentNumber, getCertificatesByCourse} from "../services/maintenance/maintenance";
+import { getFiltersData } from '../services/certificate/certificates';
 
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
     const sortParam = String(req.query.sort || 'newest');
+    const courseIdQuery = req.query.courseId as string | undefined;
+    const courseId = courseIdQuery ? parseInt(courseIdQuery, 10) : undefined;
     let files;
     let sortOrder;
-
-    console.log('maintenance sortParam:', sortParam);
 
     if (sortParam === 'oldest' || sortParam === 'newest') {
         sortOrder = sortParam;
@@ -20,8 +21,17 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
         files = await getSortedCertificates(sortOrder);
     }
 
-    console.log('maintenance files first:', files.slice(0, 5).map(f => f.fileName));
-    res.render('maintenance', { files, sortOrder });
+    // If course filter is applied, narrow down the files
+    if (!Number.isNaN(Number(courseId))) {
+        files = files.filter(f => {
+            const parts = f.fileName.split('_');
+            const cid = parseInt(parts[2], 10);
+            return !Number.isNaN(cid) && cid === courseId;
+        });
+    }
+
+    const { courses } = await getFiltersData();
+    res.render('maintenance', { files, sortOrder, courses, selectedCourseId: courseIdQuery });
 };
 
 export const deleteNow = async (req: Request, res: Response) => {
@@ -68,5 +78,15 @@ export const deleteCertificateBeforeStudentNumber = async (req: Request, res: Re
         await deleteCertificate(file.fileName);
     }
     console.log(`Deleted files before student number ${studentNumber}:`, files.map(f => f.fileName));
+    res.redirect('/admin/maintenance');
+};
+
+export const deleteCertificatesByCourse = async (req: Request, res: Response) => {
+    const { courseId } = req.body;
+    if (!courseId) return res.status(400).send('courseId is required');
+    const files = await getCertificatesByCourse(courseId);
+    for (const file of files) {
+        await deleteCertificate(file.fileName);
+    }
     res.redirect('/admin/maintenance');
 };

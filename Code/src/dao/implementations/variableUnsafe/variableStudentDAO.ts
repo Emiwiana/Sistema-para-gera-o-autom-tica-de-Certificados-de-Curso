@@ -1,11 +1,14 @@
 import {IStudentDAO} from "../../interfaces/IStudentDAO";
 import {Student} from "../../../model/student";
-import {sampleCourse} from "./variableCourseDAO";
+import {sampleCourse1, sampleCourse2} from "./variableCourseDAO";
 
 //TODO: Incluir a data de inicio e conclusão de curso (temos de ver melhor como isso estaria numa BD)
-const sampleStudents = Array.from({ length: 15 }, (_, index) =>
-    new Student(9001 + index, `Aluno de Teste ${index + 1}`, `teste${index + 1}@example.com`, sampleCourse)
-);
+// Create 16 students and split them evenly between the two sample courses
+const TOTAL = 16;
+const sampleStudents = Array.from({ length: TOTAL }, (_, index) => {
+    const course = index < TOTAL / 2 ? sampleCourse1 : sampleCourse2;
+    return new Student(9001 + index, `Aluno de Teste ${index + 1}`, `teste${index + 1}@example.com`, course);
+});
 
 
 export class VariableStudentDAO implements IStudentDAO {
