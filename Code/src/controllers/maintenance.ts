@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import {getSortedCertificates, deleteCertificate, getCertificateBeforeDate} from "../services/maintenance/maintenance";
+import {
+    getSortedCertificates,
+    deleteCertificate,
+    deleteCertificatesBeforeDate
+} from "../services/maintenance/maintenance";
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
     const sortOrder = req.query.sort === 'oldest' ? 'oldest' : 'newest';
@@ -37,10 +41,6 @@ export const scheduleDeletion = async (req: Request, res: Response) => {
 
 export const deleteBeforeDate = async (req: Request, res: Response) => {
     const { deleteBeforeDate } = req.body;
-    const files = await getCertificateBeforeDate(deleteBeforeDate);
-    for (const file of files) {
-        await deleteCertificate(file.fileName);
-    }
-    console.log(`Deleted files before ${deleteBeforeDate}:`, files.map(f => f.fileName));
+    await deleteCertificatesBeforeDate(deleteBeforeDate)
     res.redirect('/admin/maintenance');
 };
