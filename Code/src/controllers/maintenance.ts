@@ -1,10 +1,25 @@
 import { Request, Response } from 'express';
-import {getSortedCertificates, deleteCertificate, getCertificateBeforeDate} from "../services/maintenance/maintenance";
+import {getSortedCertificates, sortCertificatesByStudentNumber, deleteCertificate, getCertificateBeforeDate, getCertificateBeforeStudentNumber} from "../services/maintenance/maintenance";
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
-    const sortOrder = req.query.sort === 'oldest' ? 'oldest' : 'newest';
-    const files = await getSortedCertificates(sortOrder);
+    const sortParam = String(req.query.sort || 'newest');
+    let files;
+    let sortOrder;
 
+    console.log('maintenance sortParam:', sortParam);
+
+    if (sortParam === 'oldest' || sortParam === 'newest') {
+        sortOrder = sortParam;
+        files = await getSortedCertificates(sortOrder);
+    } else if (sortParam === 'increasing' || sortParam === 'decreasing') {
+        sortOrder = sortParam;
+        files = await sortCertificatesByStudentNumber(sortOrder);
+    } else {
+        sortOrder = 'newest';
+        files = await getSortedCertificates(sortOrder);
+    }
+
+    console.log('maintenance files first:', files.slice(0, 5).map(f => f.fileName));
     res.render('maintenance', { files, sortOrder });
 };
 
@@ -42,5 +57,15 @@ export const deleteBeforeDate = async (req: Request, res: Response) => {
         await deleteCertificate(file.fileName);
     }
     console.log(`Deleted files before ${deleteBeforeDate}:`, files.map(f => f.fileName));
+    res.redirect('/admin/maintenance');
+};
+
+export const deleteCertificateBeforeStudentNumber = async (req: Request, res: Response) => {
+    const { studentNumber } = req.body;
+    const files = await getCertificateBeforeStudentNumber(studentNumber);
+    for (const file of files) {
+        await deleteCertificate(file.fileName);
+    }
+    console.log(`Deleted files before student number ${studentNumber}:`, files.map(f => f.fileName));
     res.redirect('/admin/maintenance');
 };

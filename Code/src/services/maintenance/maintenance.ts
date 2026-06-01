@@ -21,18 +21,41 @@ export async function deleteCertificate(fileName: string) {
     return await dao.deleteCertificate(fileName);
 }
 
-export async function getCertificateBeforeStudentNumber(studentNumber: string) {
-    //Ignora este ainda n acabei
-    let files = await dao.getAllCertificates();
+function extractStudentNumber(fileName: string) {
+    const parts = fileName.split('_');
+    const lastPart = parts[parts.length - 1] ?? '';
+    const numberPart = lastPart.replace(/\.[^.]+$/, '');
+    return parseInt(numberPart, 10);
+}
 
-    // Filter files based on student number
-    files.sort((a, b) => a.fileName.localeCompare(b.fileName)).filter(file => {
-        const fileStudentNumber = file.fileName.split('_')[0];
-        return fileStudentNumber < studentNumber;
+export async function sortCertificatesByStudentNumber(sortOrder: string) {
+    let files = await dao.getAllCertificates();
+    files.sort((a, b) => {
+        const studentNumberA = extractStudentNumber(a.fileName);
+        const studentNumberB = extractStudentNumber(b.fileName);
+
+        if (Number.isNaN(studentNumberA) || Number.isNaN(studentNumberB)) {
+            return 0;
+        }
+
+        if (sortOrder === 'increasing') {
+            return studentNumberA - studentNumberB;
+        } else {
+            return studentNumberB - studentNumberA;
+        }
+    });
+    return files;
+}
+
+export async function getCertificateBeforeStudentNumber(studentNumber: string) {
+    const files = await sortCertificatesByStudentNumber('increasing'); // Get files sorted by student number
+    const cutoff = parseInt(studentNumber, 10);
+    const filesToDelete = files.filter(file => {
+        const fileStudentNumber = extractStudentNumber(file.fileName);
+        return !Number.isNaN(fileStudentNumber) && fileStudentNumber < cutoff;
     });
 
-
-    return files;
+    return filesToDelete;
 }
 
 export async function getCertificateBeforeDate(date: string | Date) {
