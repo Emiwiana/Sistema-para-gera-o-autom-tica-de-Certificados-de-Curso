@@ -20,3 +20,37 @@ export async function getSortedCertificates(sortOrder: string) {
 export async function deleteCertificate(fileName: string) {
     return await dao.deleteCertificate(fileName);
 }
+
+export async function getCertificateBeforeStudentNumber(studentNumber: string) {
+    //Ignora este ainda n acabei
+    let files = await dao.getAllCertificates();
+
+    // Filter files based on student number
+    files.sort((a, b) => a.fileName.localeCompare(b.fileName)).filter(file => {
+        const fileStudentNumber = file.fileName.split('_')[0];
+        return fileStudentNumber < studentNumber;
+    });
+
+
+    return files;
+}
+
+export async function getCertificateBeforeDate(date: string | Date) {
+    let cutoff: Date;
+    
+    if (date instanceof Date) {
+        cutoff = date;
+    } else {
+        // Format: YYYY-MM-DDTHH:MM or YYYY-MM-DDTHH:MM:SS
+        cutoff = new Date(date);
+    }
+    
+    if (isNaN(cutoff.getTime())) {
+        // invalid date, return empty list
+        return [];
+    }
+
+    const files = await getSortedCertificates('oldest');
+    const filesToDelete = files.filter(file => file.createdAt < cutoff);
+    return filesToDelete;
+}
