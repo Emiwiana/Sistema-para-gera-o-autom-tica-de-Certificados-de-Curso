@@ -58,7 +58,7 @@ export async function getCertificateBeforeStudentNumber(studentNumber: string) {
     return filesToDelete;
 }
 
-async function getCertificatesBeforeDate(date: string | Date) {
+export async function getCertificateBeforeDate(date: string | Date) {
     let cutoff: Date;
     
     if (date instanceof Date) {
@@ -75,12 +75,4 @@ async function getCertificatesBeforeDate(date: string | Date) {
 
     const files = await getSortedCertificates('oldest');
     return files.filter(file => file.createdAt < cutoff);
-}
-
-export async function deleteCertificatesBeforeDate(date: string | Date) {
-    const files = await getCertificatesBeforeDate(date);
-    for (const file of files) {
-        await deleteCertificate(file.fileName);
-    }
-    console.log(`Deleted files before ${date}:`, files.map(f => f.fileName));
 }

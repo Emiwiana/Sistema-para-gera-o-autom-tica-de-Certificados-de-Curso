@@ -2,10 +2,6 @@ p, USER, /, GET
 p, USER, /certificates/generate, GET
 p, USER, /certificates/generate, POST
 
-p, USER, /, GET
-p, USER, /certificates/generate, GET
-p, USER, /certificates/generate, POST
-
 p, ADMIN, /admin/maintenance, GET
 p, ADMIN, /admin/maintenance/delete, POST
 p, ADMIN, /admin/maintenance/schedule, POST
