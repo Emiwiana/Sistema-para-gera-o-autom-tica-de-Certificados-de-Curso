@@ -1,0 +1,230 @@
+/* ====== GLOBAL STYLES ====== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    line-height: 1.5;
+    background-color: #fafafa;
+    position: relative;
+    left: 500px;
+    right: 500px;
+    top: 0px;
+    bottom: 0px;
+
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ====== COMMON FORM & TABLE STYLES ====== */
+button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+input, select, textarea {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* ====== BUTTON STYLES ====== */
+.danger-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+.danger-btn:hover {
+    background-color: #c82333;
+}
+
+.schedule-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.schedule-btn:hover {
+    background-color: #0056b3;
+}
+
+.success-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.success-btn:hover {
+    background-color: #218838;
+}
+
+.primary-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ====== LAYOUT UTILITIES ====== */
+.form-inline {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.section {
+    margin-bottom: 1.5rem;
+    border: 1px solid #eee;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.section h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+.section-content {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.section-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ====== CARD LAYOUT ====== */
+.card {
+    max-width: 800px;
+    margin: auto;
+    padding: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+}
+
+/* ====== FILTER BAR ====== */
+.filter-bar {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+.filter-bar form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* ====== STATUS MESSAGES ====== */
+.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.info {
+    color: #004085;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* ====== NAVIGATION ====== */
+.nav-link {
+    display: inline-block;
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    color: #007bff;
+}
+
+.back-link {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    display: inline-block;
+}

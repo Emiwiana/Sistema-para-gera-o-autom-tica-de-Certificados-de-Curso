@@ -3,27 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin - Repository Maintenance</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
-        .danger-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;}
-        .schedule-btn { background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;}
-        .form-inline { display: inline-flex; gap: 5px; align-items: center; }
-    </style>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <h1>Repository Maintenance</h1>
 
-<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
-    <h2 style="margin-top:0;">Age</h2>
-    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-        <div>
+<section class="section">
+    <h2>Age</h2>
+    <div class="section-content">
+        <div class="section-item">
             <strong>Sort by Age:</strong>
             <a href="/admin/maintenance?sort=newest"><button>Newest First</button></a>
             <a href="/admin/maintenance?sort=oldest"><button>Oldest First</button></a>
         </div>
-        <div>
+        <div class="section-item">
             <strong>Delete All Before Date:</strong>
             <form action="/admin/maintenance/delete-before" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this date? This action cannot be undone.');">
                 <input type="datetime-local" name="deleteBeforeDate" required>
@@ -33,15 +26,15 @@
     </div>
 </section>
 
-<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
-    <h2 style="margin-top:0;">Student Number</h2>
-    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-        <div>
+<section class="section">
+    <h2>Student Number</h2>
+    <div class="section-content">
+        <div class="section-item">
             <strong>Sort by Student Number:</strong>
             <a href="/admin/maintenance?sort=increasing"><button>Increasing</button></a>
             <a href="/admin/maintenance?sort=decreasing"><button>Decreasing</button></a>
         </div>
-        <div>
+        <div class="section-item">
             <strong>Delete All Before Student Number:</strong>
             <form action="/admin/maintenance/delete-before-student-number" method="POST" class="form-inline" onsubmit="return confirm('Delete all files before this student number? This action cannot be undone.');">
                 <input type="number" name="studentNumber" placeholder="Enter student number" required>
@@ -51,10 +44,10 @@
     </div>
 </section>
 
-<section style="margin-bottom:1.5rem; border:1px solid #eee; padding:0.75rem; border-radius:6px;">
-    <h2 style="margin-top:0;">Course</h2>
-    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-        <div>
+<section class="section">
+    <h2>Course</h2>
+    <div class="section-content">
+        <div class="section-item">
             <form action="/admin/maintenance" method="GET" class="form-inline">
                 <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
                 <select name="courseId">
@@ -66,7 +59,7 @@
                 <button type="submit" style="margin-left:8px;">Apply</button>
             </form>
         </div>
-        <div>
+        <div class="section-item">
             <strong>Delete All By Course:</strong>
             <form action="/admin/maintenance/delete-by-course" method="POST" class="form-inline" onsubmit="return confirm('Delete all files for this course? This action cannot be undone.');">
                 <select name="courseId" required>

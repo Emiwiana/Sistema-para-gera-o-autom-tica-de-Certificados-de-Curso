@@ -3,15 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Generate Certificates</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        .card { max-width: 800px; margin: auto; padding: 1.5rem; border: 1px solid #ccc; border-radius: 10px; }
-        .filter-bar { margin-bottom: 2rem; padding: 1rem; background: #f9f9f9; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        .success { color: green; font-weight: bold; margin-bottom: 1rem; }
-        button { padding: 8px 16px; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <div class="card">
@@ -32,11 +24,11 @@
                 <% }) %>
             </select>
 
-            <label style="margin-left: 10px;">Year:</label>
+            <label>Year:</label>
             <input type="number" name="year" placeholder="e.g., 2024" value="<%= filters.year || '' %>">
 
-            <button type="submit" style="margin-left: 10px;">Apply Filters</button>
-            <a href="/certificates/generate" style="margin-left: 10px;">Clear</a>
+            <button type="submit">Apply Filters</button>
+            <a href="/certificates/generate">Clear</a>
         </form>
     </div>
 
@@ -67,7 +59,7 @@
         </table>
 
         <% if (students.length > 0) { %>
-            <button type="submit" style="background: #28a745; color: white; border: none; border-radius: 5px;">
+            <button type="submit" class="success-btn">
                 Generate Selected Certificates
             </button>
         <% } %>
