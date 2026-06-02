@@ -2,13 +2,16 @@ import path from "path";
 import {Student} from "../../../model/student";
 import fs from "fs/promises";
 import {CertificateRepositoryDir} from "../../../configs/localRepository";
+import {Certificate} from "../../../model/certificate";
 
 export class CertificateDAO {
 
     async getCertificateByStudent(student : Student) {
         try {
-            const filePath = path.join(CertificateRepositoryDir, student.certificateFileName);
-            return fs.readFile(filePath);
+            const fileName = student.certificateFileName;
+            const filePath = path.join(CertificateRepositoryDir, fileName);
+            const stats = await fs.stat((filePath))
+            return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
         } catch (error) {
             return null;
         }
@@ -21,13 +24,7 @@ export class CertificateDAO {
                 files.map(async (fileName) => {
                     const filePath = path.join(CertificateRepositoryDir, fileName);
                     const stats = await fs.stat(filePath);
-                    return {
-                        fileName,
-                        path: filePath,
-                        // mtime is the last modified date, birthtime is creation date
-                        createdAt: stats.birthtime,
-                        timestamp: stats.birthtimeMs
-                    };
+                    return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
                 })
             );
         } catch (error) {
@@ -36,13 +33,13 @@ export class CertificateDAO {
         }
     }
 
-    async deleteCertificate(fileName: string) {
+    async deleteCertificate(certificate: Certificate) {
         try {
-            const filePath = path.join(CertificateRepositoryDir, fileName);
+            const filePath = path.join(CertificateRepositoryDir, certificate.name);
             await fs.unlink(filePath);
             return true;
         } catch (error) {
-            console.error(`Error deleting ${fileName}:`, error);
+            console.error(`Error deleting ${certificate.name}:`, error);
             return false;
         }
     }
@@ -50,7 +47,8 @@ export class CertificateDAO {
     async getCertificateByName(fileName: string) {
         try {
             const filePath = path.join(CertificateRepositoryDir, fileName);
-            return fs.readFile(filePath);
+            const stats = await fs.stat((filePath))
+            return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
         } catch (error) {
             return null;
         }

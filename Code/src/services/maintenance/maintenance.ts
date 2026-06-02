@@ -1,6 +1,15 @@
 import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
+import {Certificate} from "../../model/certificate";
 
 const dao = new CertificateDAO();
+
+export async function getCertificateByName(name: string): Promise<Certificate[]> {
+    const certificate = await dao.getCertificateByName(name)
+    if (certificate) {
+        return [certificate];
+    }
+    return []
+}
 
 export async function getSortedCertificates(sortOrder: string) {
     let files = await dao.getAllCertificates();
@@ -8,44 +17,30 @@ export async function getSortedCertificates(sortOrder: string) {
     // Sort the files by age
     files.sort((a, b) => {
         if (sortOrder === 'oldest') {
-            return a.timestamp - b.timestamp; // Ascending
+            return a.modifiedAt - b.modifiedAt; // Ascending
         } else {
-            return b.timestamp - a.timestamp; // Descending
+            return b.modifiedAt - a.modifiedAt; // Descending
         }
     });
 
     return files;
 }
 
-export async function deleteCertificates(certificates: Promise<any>): Promise<boolean> {
+export async function deleteCertificates(certificates: Promise<Certificate[]>): Promise<boolean> {
     for (const file of await certificates) {
-        if (await dao.deleteCertificate(file.fileName)) {
-            console.log('Deleted file', file.fileName);
+        if (await dao.deleteCertificate(file)) {
+            console.log('Deleted file', file.name);
         }
         else return false;
     }
     return true;
 }
 
-function extractStudentNumber(fileName: string) {
-    const parts = fileName.split('_');
-    const lastPart = parts[parts.length - 1] ?? '';
-    const numberPart = lastPart.replace(/\.[^.]+$/, '');
-    return parseInt(numberPart, 10);
-}
-
-function extractCourseId(fileName: string) {
-    const parts = fileName.split('_');
-    // pattern: certificado_curso_{courseId}_aluno_{studentId}.pdf
-    const coursePart = parts[2] ?? '';
-    return parseInt(String(coursePart), 10);
-}
-
 export async function sortCertificatesByStudentNumber(sortOrder: string) {
     let files = await dao.getAllCertificates();
     files.sort((a, b) => {
-        const studentNumberA = extractStudentNumber(a.fileName);
-        const studentNumberB = extractStudentNumber(b.fileName);
+        const studentNumberA = a.extractStudentNumber();
+        const studentNumberB = b.extractStudentNumber();
 
         if (Number.isNaN(studentNumberA) || Number.isNaN(studentNumberB)) {
             return 0;
@@ -60,11 +55,11 @@ export async function sortCertificatesByStudentNumber(sortOrder: string) {
     return files;
 }
 
-export async function getCertificateBeforeStudentNumber(studentNumber: string) {
+export async function getCertificatesBeforeStudentNumber(studentNumber: string) {
     const files = await sortCertificatesByStudentNumber('increasing'); // Get files sorted by student number
     const cutoff = parseInt(studentNumber, 10);
     return files.filter(file => {
-        const fileStudentNumber = extractStudentNumber(file.fileName);
+        const fileStudentNumber = file.extractStudentNumber();
         return !Number.isNaN(fileStudentNumber) && fileStudentNumber < cutoff;
     });
 }
@@ -72,16 +67,15 @@ export async function getCertificateBeforeStudentNumber(studentNumber: string) {
 export async function getCertificatesByCourse(courseId: number | string) {
     const cutoff = parseInt(String(courseId), 10);
     if (Number.isNaN(cutoff)) return [];
-
     const files = await dao.getAllCertificates();
     return files.filter(f => {
-        const cid = extractCourseId(f.fileName);
+        const cid = f.extractCourseId();
         return !Number.isNaN(cid) && cid === cutoff;
     });
 }
 
 
-export async function getCertificateBeforeDate(date: string | Date) {
+export async function getCertificatesBeforeDate(date: string | Date) {
     let cutoff: Date;
     
     if (date instanceof Date) {

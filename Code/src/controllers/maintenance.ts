@@ -2,9 +2,14 @@ import { Request, Response } from 'express';
 import {
     getSortedCertificates,
     sortCertificatesByStudentNumber,
-    deleteCertificates, getCertificateBeforeDate, getCertificateBeforeStudentNumber, getCertificatesByCourse
+    deleteCertificates,
+    getCertificatesBeforeDate,
+    getCertificatesBeforeStudentNumber,
+    getCertificatesByCourse,
+    getCertificateByName
 } from "../services/maintenance/maintenance";
 import { getFiltersData } from '../services/certificate/certificates';
+import {Certificate} from "../model/certificate";
 
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
@@ -28,7 +33,7 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     // If course filter is applied, narrow down the files
     if (!Number.isNaN(Number(courseId))) {
         files = files.filter(f => {
-            const parts = f.fileName.split('_');
+            const parts = f.name.split('_');
             const cid = parseInt(parts[2], 10);
             return !Number.isNaN(cid) && cid === courseId;
         });
@@ -50,7 +55,7 @@ export const scheduleDeletion = async (req: Request, res: Response) => {
 
 const createDeletionController = (
     paramName: string,
-    getCertificatesFn: (param: any) => Promise<any>) => {
+    getCertificatesFn: (param: string) => Promise<Certificate[]>) => {
     return async (req: Request, res: Response) => {
         const paramValue = req.body[paramName];
 
@@ -58,7 +63,7 @@ const createDeletionController = (
             return res.status(400).send(`${paramName} is required`);
         }
 
-        const certificates = await getCertificatesFn(paramValue);
+        const certificates = getCertificatesFn(paramValue);
         const success = await deleteCertificates(certificates);
         if (success) {
             res.redirect('/admin/maintenance');
@@ -70,18 +75,17 @@ const createDeletionController = (
 
 export const deleteNow = createDeletionController(
     'fileName',
-    // We instantly return the single file in an array to satisfy the factory's flow
-    async (fileName: string) => [{ fileName }]
+    getCertificateByName
 );
 
 export const deleteBeforeDate = createDeletionController(
     'deleteBeforeDate',
-    getCertificateBeforeDate
+    getCertificatesBeforeDate
 );
 
 export const deleteBeforeStudentNumber = createDeletionController(
     'studentNumber',
-    getCertificateBeforeStudentNumber
+    getCertificatesBeforeStudentNumber
 );
 
 export const deleteByCourse = createDeletionController(
