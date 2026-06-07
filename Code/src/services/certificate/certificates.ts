@@ -27,7 +27,7 @@ export async function processCertificates(studentIds: number[]) {
     // 1. Fetch the full Student objects from the database using their IDs
     const students = await studentDao.getStudentsByIds(studentIds);
 
-    // 2. Pass the validated objects into your existing PDF generator
+    // 2. Pass the validated objects into PDF generator
     await generatePdfCertificates(students);
 
     return students;

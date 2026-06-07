@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import {
-    getSortedCertificates,
-    sortCertificatesByStudentNumber,
     deleteCertificates,
     getCertificatesBeforeDate,
     getCertificatesBeforeStudentNumber,
     getCertificatesByCourse,
-    getCertificateByName
+    getCertificateByName, getMaintenanceData
 } from "../services/maintenance/maintenance";
 import { getFiltersData } from '../services/certificate/certificates';
 import {Certificate} from "../model/certificate";
@@ -16,31 +14,17 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     const sortParam = String(req.query.sort || 'newest');
     const courseIdQuery = req.query.courseId as string | undefined;
     const courseId = courseIdQuery ? parseInt(courseIdQuery, 10) : undefined;
-    let files;
-    let sortOrder;
 
-    if (sortParam === 'oldest' || sortParam === 'newest') {
-        sortOrder = sortParam;
-        files = await getSortedCertificates(sortOrder);
-    } else if (sortParam === 'increasing' || sortParam === 'decreasing') {
-        sortOrder = sortParam;
-        files = await sortCertificatesByStudentNumber(sortOrder);
-    } else {
-        sortOrder = 'newest';
-        files = await getSortedCertificates(sortOrder);
-    }
-
-    // If course filter is applied, narrow down the files
-    if (!Number.isNaN(Number(courseId))) {
-        files = files.filter(f => {
-            const parts = f.name.split('_');
-            const cid = parseInt(parts[2], 10);
-            return !Number.isNaN(cid) && cid === courseId;
-        });
-    }
-
+    // Delegate business rules entirely to the service layer
+    const { files, sortOrder } = await getMaintenanceData(sortParam, courseId);
     const { courses } = await getFiltersData();
-    res.render('maintenance', { files, sortOrder, courses, selectedCourseId: courseIdQuery });
+
+    res.render('maintenance', {
+        files,
+        sortOrder,
+        courses,
+        selectedCourseId: courseIdQuery
+    });
 };
 
 export const scheduleDeletion = async (req: Request, res: Response) => {
@@ -63,7 +47,7 @@ const createDeletionController = (
             return res.status(400).send(`${paramName} is required`);
         }
 
-        const certificates = getCertificatesFn(paramValue);
+        const certificates = await getCertificatesFn(paramValue);
         const success = await deleteCertificates(certificates);
         if (success) {
             res.redirect('/admin/maintenance');

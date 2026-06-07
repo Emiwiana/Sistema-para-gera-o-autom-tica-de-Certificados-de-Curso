@@ -1,95 +1,83 @@
-import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
-import {Certificate} from "../../model/certificate";
+import { CertificateDAO } from "../../dao/implementations/local/certificateDAO";
+import { Certificate } from "../../model/certificate";
 
 const dao = new CertificateDAO();
 
-export async function getCertificateByName(name: string): Promise<Certificate[]> {
-    const certificate = await dao.getCertificateByName(name)
-    if (certificate) {
-        return [certificate];
-    }
-    return []
-}
+export type DateSortOrder = 'oldest' | 'newest';
+export type NumberSortOrder = 'increasing' | 'decreasing';
 
-export async function getSortedCertificates(sortOrder: string) {
+export async function getMaintenanceData(sortParam: string, courseId?: number) {
     let files = await dao.getAllCertificates();
+    let sortOrder: DateSortOrder | NumberSortOrder = 'newest';
 
-    // Sort the files by age
-    files.sort((a, b) => {
-        if (sortOrder === 'oldest') {
-            return a.modifiedAt - b.modifiedAt; // Ascending
-        } else {
-            return b.modifiedAt - a.modifiedAt; // Descending
-        }
-    });
-
-    return files;
-}
-
-export async function deleteCertificates(certificates: Promise<Certificate[]>): Promise<boolean> {
-    for (const file of await certificates) {
-        if (await dao.deleteCertificate(file)) {
-            console.log('Deleted file', file.name);
-        }
-        else return false;
+    // 1. Filter first (efficient)
+    if (courseId !== undefined && !Number.isNaN(courseId)) {
+        files = files.filter(f => f.extractCourseId() === courseId);
     }
-    return true;
-}
 
-export async function sortCertificatesByStudentNumber(sortOrder: string) {
-    let files = await dao.getAllCertificates();
-    files.sort((a, b) => {
-        const studentNumberA = a.extractStudentNumber();
-        const studentNumberB = b.extractStudentNumber();
-
-        if (Number.isNaN(studentNumberA) || Number.isNaN(studentNumberB)) {
-            return 0;
-        }
-
-        if (sortOrder === 'increasing') {
-            return studentNumberA - studentNumberB;
-        } else {
-            return studentNumberB - studentNumberA;
-        }
-    });
-    return files;
-}
-
-export async function getCertificatesBeforeStudentNumber(studentNumber: string) {
-    const files = await sortCertificatesByStudentNumber('increasing'); // Get files sorted by student number
-    const cutoff = parseInt(studentNumber, 10);
-    return files.filter(file => {
-        const fileStudentNumber = file.extractStudentNumber();
-        return !Number.isNaN(fileStudentNumber) && fileStudentNumber < cutoff;
-    });
-}
-
-export async function getCertificatesByCourse(courseId: number | string) {
-    const cutoff = parseInt(String(courseId), 10);
-    if (Number.isNaN(cutoff)) return [];
-    const files = await dao.getAllCertificates();
-    return files.filter(f => {
-        const cid = f.extractCourseId();
-        return !Number.isNaN(cid) && cid === cutoff;
-    });
-}
-
-
-export async function getCertificatesBeforeDate(date: string | Date) {
-    let cutoff: Date;
-    
-    if (date instanceof Date) {
-        cutoff = date;
+    // 2. Sort second
+    if (sortParam === 'oldest' || sortParam === 'newest') {
+        sortOrder = sortParam as DateSortOrder;
+        files = sortCertificates(files, sortOrder);
+    } else if (sortParam === 'increasing' || sortParam === 'decreasing') {
+        sortOrder = sortParam as NumberSortOrder;
+        files = sortCertificatesByNumber(files, sortOrder);
     } else {
-        // Format: YYYY-MM-DDTHH:MM or YYYY-MM-DDTHH:MM:SS
-        cutoff = new Date(date);
-    }
-    
-    if (isNaN(cutoff.getTime())) {
-        // invalid date, return empty list
-        return [];
+        files = sortCertificates(files, 'newest');
     }
 
-    const files = await getSortedCertificates('oldest');
-    return files.filter(file => file.createdAt < cutoff);
+    return { files, sortOrder };
+}
+
+export async function getCertificateByName(name: string): Promise<Certificate[]> {
+    const certificate = await dao.getCertificateByName(name);
+    return certificate ? [certificate] : [];
+}
+function sortCertificates(certificates: Certificate[], sortOrder: DateSortOrder): Certificate[] {
+    return [...certificates].sort((a, b) => {
+        return sortOrder === 'oldest'
+            ? a.modifiedAt - b.modifiedAt
+            : b.modifiedAt - a.modifiedAt;
+    });
+}
+
+export async function deleteCertificates(certificates: Certificate[]): Promise<boolean> {
+    let allSuccessful = true;
+    for (const file of certificates) {
+        const isDeleted = await dao.deleteCertificate(file);
+        if (isDeleted) {
+            console.log(`Deleted file: ${file.name}`);
+        } else {
+            allSuccessful = false;
+        }
+    }
+    return allSuccessful;
+}
+function sortCertificatesByNumber(certificates: Certificate[], sortOrder: NumberSortOrder): Certificate[] {
+    return [...certificates].sort((a, b) => {
+        const numA = a.extractStudentNumber();
+        const numB = b.extractStudentNumber();
+
+        if (Number.isNaN(numA) || Number.isNaN(numB)) return 0;
+
+        return sortOrder === 'increasing' ? numA - numB : numB - numA;
+    });
+}
+
+export async function getCertificatesBeforeStudentNumber(studentNumber: string): Promise<Certificate[]> {
+    const cutoff = parseInt(studentNumber, 10);
+    if (Number.isNaN(cutoff)) return [];
+    return dao.getCertificatesBeforeStudentNumber(cutoff);
+}
+
+export async function getCertificatesByCourse(courseId: number | string): Promise<Certificate[]> {
+    const parsedId = parseInt(String(courseId), 10);
+    if (Number.isNaN(parsedId)) return [];
+    return dao.getCertificatesByCourse(parsedId);
+}
+
+export async function getCertificatesBeforeDate(date: string | Date): Promise<Certificate[]> {
+    const cutoff = new Date(date);
+    if (isNaN(cutoff.getTime())) return [];
+    return dao.getCertificatesBeforeDate(cutoff);
 }

@@ -1,39 +1,47 @@
 import path from "path";
-import {Student} from "../../../model/student";
 import fs from "fs/promises";
-import {CertificateRepositoryDir} from "../../../configs/localRepository";
-import {Certificate} from "../../../model/certificate";
+import { Student } from "../../../model/student";
+import { CertificateRepositoryDir } from "../../../configs/localRepository";
+import { Certificate } from "../../../model/certificate";
 
 export class CertificateDAO {
 
-    async getCertificateByStudent(student : Student) {
+    // Extracted helper method to centralize file reading and object instantiation
+    private async createCertificateFromFile(fileName: string): Promise<Certificate | null> {
         try {
-            const fileName = student.certificateFileName;
             const filePath = path.join(CertificateRepositoryDir, fileName);
-            const stats = await fs.stat((filePath))
-            return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
+            const stats = await fs.stat(filePath);
+            return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs);
         } catch (error) {
             return null;
         }
     }
 
-    async getAllCertificates() {
+    async getCertificateByStudent(student: Student): Promise<Certificate | null> {
+        return this.createCertificateFromFile(student.certificateFileName);
+    }
+
+    async getCertificateByName(fileName: string): Promise<Certificate | null> {
+        return this.createCertificateFromFile(fileName);
+    }
+
+    async getAllCertificates(): Promise<Certificate[]> {
         try {
             const files = await fs.readdir(CertificateRepositoryDir);
-            return await Promise.all(
-                files.map(async (fileName) => {
-                    const filePath = path.join(CertificateRepositoryDir, fileName);
-                    const stats = await fs.stat(filePath);
-                    return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
-                })
+
+            const certificates = await Promise.all(
+                files.map(fileName => this.createCertificateFromFile(fileName))
             );
+
+            // Filter out any nulls in case a file was deleted between readdir and stat
+            return certificates.filter((cert): cert is Certificate => cert !== null);
         } catch (error) {
             console.error("Error reading output directory:", error);
             return [];
         }
     }
 
-    async deleteCertificate(certificate: Certificate) {
+    async deleteCertificate(certificate: Certificate): Promise<boolean> {
         try {
             const filePath = path.join(CertificateRepositoryDir, certificate.name);
             await fs.unlink(filePath);
@@ -44,15 +52,24 @@ export class CertificateDAO {
         }
     }
 
-    async getCertificateByName(fileName: string) {
-        try {
-            const filePath = path.join(CertificateRepositoryDir, fileName);
-            const stats = await fs.stat((filePath))
-            return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs)
-        } catch (error) {
-            return null;
-        }
+    async getCertificatesByCourse(courseId: number): Promise<Certificate[]> {
+        const files = await this.getAllCertificates();
+        return files.filter(f => {
+            const cid = f.extractCourseId();
+            return !Number.isNaN(cid) && cid === courseId;
+        });
+    }
 
+    async getCertificatesBeforeDate(cutoffDate: Date): Promise<Certificate[]> {
+        const files = await this.getAllCertificates();
+        return files.filter(file => file.createdAt < cutoffDate);
+    }
+
+    async getCertificatesBeforeStudentNumber(cutOff: number): Promise<Certificate[]> {
+        const files = await this.getAllCertificates();
+        return files.filter(file => {
+            const num = file.extractStudentNumber();
+            return !Number.isNaN(num) && num < cutOff;
+        });
     }
 }
-
