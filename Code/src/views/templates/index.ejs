@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Templates</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<h1>Certificate Templates</h1>
+
+<p><a href="/">Back to Dashboard</a></p>
+
+<div class="actions">
+    <a href="/templates/create">
+        <button class="success-btn">Create New Template</button>
+    </a>
+</div>
+
+<% if (templates && templates.length > 0) { %>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    <% templates.forEach(template => { %>
+
+        <tr>
+            <td><%= template.id %></td>
+            <td><%= template.name %></td>
+
+            <td>
+
+                <a href="/templates/edit/<%= template.id %>">
+                    <button type="button" class="primary-btn">Edit</button>
+                </a>
+
+                <form
+                    action="/templates/delete"
+                    method="POST"
+                    style="display:inline;"
+                >
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="<%= template.id %>"
+                    >
+
+                    <button
+                        type="submit"
+                        class="danger-btn"
+                        onclick="return confirm('Delete this template?')"
+                    >
+                        Delete
+                    </button>
+                </form>
+
+            </td>
+        </tr>
+
+    <% }) %>
+
+    </tbody>
+</table>
+
+<% } else { %>
+
+<p>No templates found.</p>
+
+<% } %>
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Template</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .template-form-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .template-form {
+            flex: 1;
+            min-width: 400px;
+        }
+        .template-preview-panel {
+            flex: 1;
+            min-width: 400px;
+            position: sticky;
+            top: 2rem;
+        }
+        .template-preview-panel iframe {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+        }
+        .field-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .field-group label {
+            min-width: 80px;
+            font-weight: 600;
+        }
+        .field-group input[type="number"] {
+            width: 80px;
+        }
+        .field-group input[type="color"] {
+            width: 50px;
+            height: 32px;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Edit Template</h1>
+<p><a href="/templates">Back to Templates</a></p>
+
+<div class="template-form-container">
+
+<form action="/templates/update" method="POST" class="template-form" id="templateForm">
+
+    <input type="hidden" name="id" value="<%= template.id %>">
+
+    <div class="section">
+        <h2>Template Information</h2>
+        <div class="field-group">
+            <label>Name</label>
+            <input type="text" name="name" value="<%= template.name %>" required>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Page Settings</h2>
+        <div class="field-group">
+            <label>Background</label>
+            <input type="color" name="backgroundColor" value="<%= template.layout.page.backgroundColor %>">
+            <label>Border Color</label>
+            <input type="color" name="borderColor" value="<%= template.layout.page.borderColor %>">
+            <label>Border Width</label>
+            <input type="number" name="borderWidth" value="<%= template.layout.page.borderWidth %>" min="0">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Title</h2>
+        <div class="field-group">
+            <label>Text</label>
+            <input type="text" name="titleText" value="<%= elements.title.content || '' %>">
+        </div>
+        <div class="field-group">
+            <label>X</label>
+            <input type="number" name="titleX" value="<%= elements.title.x %>">
+            <label>Y</label>
+            <input type="number" name="titleY" value="<%= elements.title.y %>">
+            <label>Font Size</label>
+            <input type="number" name="titleFontSize" value="<%= elements.title.fontSize || 60 %>">
+            <label>Font</label>
+            <input type="text" name="titleFontFamily" value="<%= elements.title.fontFamily || 'Impact' %>">
+            <label>Color</label>
+            <input type="color" name="titleColor" value="<%= elements.title.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Intro Text</h2>
+        <div class="field-group">
+            <label>Text</label>
+            <input type="text" name="introText" value="<%= elements.intro.content || 'Certifica-se que' %>">
+        </div>
+        <div class="field-group">
+            <label>X</label>
+            <input type="number" name="introX" value="<%= elements.intro.x %>">
+            <label>Y</label>
+            <input type="number" name="introY" value="<%= elements.intro.y %>">
+            <label>Font Size</label>
+            <input type="number" name="introFontSize" value="<%= elements.intro.fontSize || 30 %>">
+            <label>Font</label>
+            <input type="text" name="introFontFamily" value="<%= elements.intro.fontFamily || 'Haettenschweiler' %>">
+            <label>Color</label>
+            <input type="color" name="introColor" value="<%= elements.intro.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Student Name</h2>
+        <div class="field-group">
+            <label>X</label>
+            <input type="number" name="studentNameX" value="<%= elements.studentName.x %>">
+            <label>Y</label>
+            <input type="number" name="studentNameY" value="<%= elements.studentName.y %>">
+            <label>Font Size</label>
+            <input type="number" name="studentNameFontSize" value="<%= elements.studentName.fontSize || 30 %>">
+            <label>Font</label>
+            <input type="text" name="studentNameFontFamily" value="<%= elements.studentName.fontFamily || 'Arial Narrow Bold' %>">
+            <label>Color</label>
+            <input type="color" name="studentNameColor" value="<%= elements.studentName.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Main Text</h2>
+        <div class="field-group">
+            <label>Text</label>
+        </div>
+        <textarea
+            name="mainText"
+            rows="4"
+            style="width: 100%;"
+        ><%= elements.mainText.content || '' %></textarea>
+        <div class="field-group" style="margin-top: 0.5rem;">
+            <label>X</label>
+            <input type="number" name="mainTextX" value="<%= elements.mainText.x %>">
+            <label>Y</label>
+            <input type="number" name="mainTextY" value="<%= elements.mainText.y %>">
+            <label>Font Size</label>
+            <input type="number" name="mainTextFontSize" value="<%= elements.mainText.fontSize || 20 %>">
+            <label>Font</label>
+            <input type="text" name="mainTextFontFamily" value="<%= elements.mainText.fontFamily || 'Arial Narrow Bold' %>">
+            <label>Color</label>
+            <input type="color" name="mainTextColor" value="<%= elements.mainText.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Congratulations</h2>
+        <div class="field-group">
+            <label>Text</label>
+            <input type="text" name="congratulationsText" value="<%= elements.congratulations.content || '' %>">
+        </div>
+        <div class="field-group">
+            <label>X</label>
+            <input type="number" name="congratulationsX" value="<%= elements.congratulations.x %>">
+            <label>Y</label>
+            <input type="number" name="congratulationsY" value="<%= elements.congratulations.y %>">
+            <label>Font Size</label>
+            <input type="number" name="congratulationsFontSize" value="<%= elements.congratulations.fontSize || 50 %>">
+            <label>Font</label>
+            <input type="text" name="congratulationsFontFamily" value="<%= elements.congratulations.fontFamily || 'Haettenschweiler' %>">
+            <label>Color</label>
+            <input type="color" name="congratulationsColor" value="<%= elements.congratulations.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Signature</h2>
+        <div class="field-group">
+            <label>Text</label>
+            <input type="text" name="signatureText" value="<%= elements.signature.content || '' %>">
+        </div>
+        <div class="field-group">
+            <label>X</label>
+            <input type="number" name="signatureX" value="<%= elements.signature.x %>">
+            <label>Y</label>
+            <input type="number" name="signatureY" value="<%= elements.signature.y %>">
+            <label>Font Size</label>
+            <input type="number" name="signatureFontSize" value="<%= elements.signature.fontSize || 30 %>">
+            <label>Font</label>
+            <input type="text" name="signatureFontFamily" value="<%= elements.signature.fontFamily || 'Arial Narrow Bold' %>">
+            <label>Color</label>
+            <input type="color" name="signatureColor" value="<%= elements.signature.color || '#2655b5' %>">
+        </div>
+    </div>
+
+    <div class="section" id="imagesSection">
+        <h2>Images</h2>
+        <div id="imagesContainer">
+            <!-- Dynamic images will be rendered here -->
+        </div>
+        <button type="button" class="primary-btn" id="addImageBtn" style="margin-top: 8px;">
+            Add Image
+        </button>
+        <input type="hidden" name="imagesJson" id="imagesJson" value="">
+    </div>
+
+    <button type="submit" class="success-btn">
+        Save Changes
+    </button>
+    <button type="button" class="primary-btn" id="previewBtn" style="margin-left: 8px;">
+        Preview
+    </button>
+
+</form>
+
+<div class="template-preview-panel">
+    <h2>Preview</h2>
+    <iframe id="previewFrame" srcdoc="<p style='padding:1rem;color:#999;'>Click 'Preview' to see your certificate.</p>"></iframe>
+</div>
+
+</div>
+
+<script>
+(function() {
+    const form = document.getElementById('templateForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const previewFrame = document.getElementById('previewFrame');
+
+    // Images Editor Logic
+    const imagesContainer = document.getElementById('imagesContainer');
+    const addImageBtn = document.getElementById('addImageBtn');
+    const imagesJsonInput = document.getElementById('imagesJson');
+
+    let images = <%- JSON.stringify(images || []) %>;
+
+    function renderImages() {
+        imagesContainer.innerHTML = '';
+        images.forEach((image, index) => {
+            const div = document.createElement('div');
+            div.className = 'field-group';
+            div.style.border = '1px solid #ddd';
+            div.style.padding = '10px';
+            div.style.marginBottom = '10px';
+            div.style.borderRadius = '4px';
+            div.style.display = 'flex';
+            div.style.flexDirection = 'column';
+            div.style.gap = '8px';
+            div.style.width = '100%';
+            div.style.boxSizing = 'border-box';
+
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: space-between;">
+                    <strong>Image #${index + 1}</strong>
+                    <button type="button" class="danger-btn" style="padding: 2px 8px; font-size: 12px;">Remove</button>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 12px; font-weight: bold; min-width: auto;">Image Source (URL or Upload File below)</label>
+                        <input type="text" class="image-src" value="${image.src || ''}" style="width: 95%;" placeholder="http://example.com/logo.png">
+                        <input type="file" class="image-file" accept="image/*" style="margin-top: 4px;">
+                    </div>
+                    <div style="width: 60px; height: 60px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden; border-radius: 4px; flex-shrink: 0;">
+                        <img src="${image.src || ''}" class="image-preview" style="max-width: 100%; max-height: 100%; display: ${image.src ? 'block' : 'none'};">
+                        <span class="image-placeholder" style="font-size: 9px; color: #999; display: ${image.src ? 'none' : 'block'};">No Image</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <label style="min-width: auto;">X:</label>
+                    <input type="number" class="image-x" value="${image.x || 100}" style="width: 70px;">
+                    <label style="min-width: auto;">Y:</label>
+                    <input type="number" class="image-y" value="${image.y || 100}" style="width: 70px;">
+                    <label style="min-width: auto;">Width:</label>
+                    <input type="number" class="image-width" value="${image.width || 150}" style="width: 70px;">
+                    <label style="min-width: auto;">Height:</label>
+                    <input type="number" class="image-height" value="${image.height || 150}" style="width: 70px;">
+                </div>
+            `;
+
+            const removeBtn = div.querySelector('.danger-btn');
+            removeBtn.addEventListener('click', () => {
+                images.splice(index, 1);
+                renderImages();
+                updateHiddenInput();
+            });
+
+            const srcInput = div.querySelector('.image-src');
+            const fileInput = div.querySelector('.image-file');
+            const previewImg = div.querySelector('.image-preview');
+            const placeholderSpan = div.querySelector('.image-placeholder');
+
+            srcInput.addEventListener('input', (e) => {
+                image.src = e.target.value;
+                if (image.src) {
+                    previewImg.src = image.src;
+                    previewImg.style.display = 'block';
+                    placeholderSpan.style.display = 'none';
+                } else {
+                    previewImg.style.display = 'none';
+                    placeholderSpan.style.display = 'block';
+                }
+                updateHiddenInput();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        const base64 = evt.target.result;
+                        srcInput.value = base64;
+                        image.src = base64;
+                        previewImg.src = base64;
+                        previewImg.style.display = 'block';
+                        placeholderSpan.style.display = 'none';
+                        updateHiddenInput();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            ['x', 'y', 'width', 'height'].forEach(prop => {
+                const input = div.querySelector(`.image-${prop}`);
+                input.addEventListener('input', (e) => {
+                    image[prop] = parseInt(e.target.value, 10) || 0;
+                    updateHiddenInput();
+                });
+            });
+
+            imagesContainer.appendChild(div);
+        });
+    }
+
+    function updateHiddenInput() {
+        imagesJsonInput.value = JSON.stringify(images);
+    }
+
+    addImageBtn.addEventListener('click', () => {
+        images.push({
+            id: 'image_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            type: 'image',
+            src: '',
+            x: 100,
+            y: 100,
+            width: 150,
+            height: 150
+        });
+        renderImages();
+        updateHiddenInput();
+    });
+
+    renderImages();
+    updateHiddenInput();
+
+    previewBtn.addEventListener('click', async function() {
+        updateHiddenInput();
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        try {
+            const response = await fetch('/templates/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString(),
+            });
+            const html = await response.text();
+            previewFrame.srcdoc = html;
+        } catch (err) {
+            previewFrame.srcdoc = '<p style="color:red;padding:1rem;">Error loading preview.</p>';
+        }
+    });
+
+    form.addEventListener('submit', updateHiddenInput);
+})();
+</script>
+
+</body>
+</html>

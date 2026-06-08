@@ -11,6 +11,7 @@
     <p><a href="/">Back to Dashboard</a></p>
 
     <% if (successMessage) { %> <div class="success"><%= successMessage %></div> <% } %>
+    <% if (typeof errorMessage !== 'undefined' && errorMessage) { %> <div class="error"><%= errorMessage %></div> <% } %>
 
     <div class="filter-bar">
         <form action="/certificates/generate" method="GET">
@@ -33,6 +34,21 @@
     </div>
 
     <form action="/certificates/generate" method="POST">
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <label style="font-weight: 600;">Select Template:</label>
+            <select name="templateId" required style="min-width: 250px;">
+                <option value="">-- Choose a template --</option>
+                <% templates.forEach(tpl => { %>
+                    <option value="<%= tpl.id %>"><%= tpl.name %> (ID: <%= tpl.id %>)</option>
+                <% }) %>
+            </select>
+            <% if (templates.length === 0) { %>
+                <span style="color: red; font-size: 0.9rem; font-weight: bold;">
+                    No templates found. Please <a href="/templates/create" style="text-decoration: underline; color: red;">Create a template first</a>.
+                </span>
+            <% } %>
+        </div>
+
         <table>
             <thead>
             <tr>

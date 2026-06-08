@@ -2,6 +2,7 @@ import express from 'express';
 import { router as authRoutes } from './auth';
 import {router as maintenanceRoutes} from './maintenance'
 import {router as certificateRoutes} from './certificates'
+import {router as templatesRoutes} from './templates'
 
 import { authenticate } from '../middlewares/authenticate';
 import {showDashboard} from "../controllers/dashboard";
@@ -15,5 +16,6 @@ router.use('/auth', authRoutes);
 router.get('/', authenticate, showDashboard);
 router.use('/admin', maintenanceRoutes)
 router.use('/certificates', certificateRoutes)
+router.use('/templates', templatesRoutes)
 
 module.exports = router;

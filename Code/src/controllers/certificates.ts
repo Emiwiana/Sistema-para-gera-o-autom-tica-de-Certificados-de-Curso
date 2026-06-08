@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import {getFiltersData, getStudentsForGeneration, processCertificates} from "../services/certificate/certificates";
+import {TemplateDAO} from "../dao/implementations/local/templateDAO";
+
+const templateDAO = new TemplateDAO();
 
 export const getGeneratePage = async (req: Request, res: Response) => {
     try {
@@ -13,10 +16,12 @@ export const getGeneratePage = async (req: Request, res: Response) => {
 
         const { courses } = await getFiltersData();
         const students = await getStudentsForGeneration(courseId, year);
+        const templates = await templateDAO.getAllTemplates();
 
         res.render('generate-certificates', {
             students,
             courses,
+            templates,
             filters: { courseId, year },
             successMessage: null,
             errorMessage: null
@@ -29,7 +34,45 @@ export const getGeneratePage = async (req: Request, res: Response) => {
 export const handleGenerateSubmit = async (req: Request, res: Response) => {
     try {
         // Express parses checkboxes into an array if multiple are selected
-        let { studentIds } = req.body;
+        let { studentIds, templateId } = req.body;
+
+        const templates = await templateDAO.getAllTemplates();
+        const { courses } = await getFiltersData();
+        const students = await getStudentsForGeneration();
+
+        if (!templateId) {
+            return res.render('generate-certificates', {
+                students,
+                courses,
+                templates,
+                filters: {},
+                successMessage: null,
+                errorMessage: "Please select a template to generate the certificates."
+            });
+        }
+
+        const numericTemplateId = parseInt(templateId, 10);
+        if (isNaN(numericTemplateId)) {
+            return res.render('generate-certificates', {
+                students,
+                courses,
+                templates,
+                filters: {},
+                successMessage: null,
+                errorMessage: "Invalid template selected."
+            });
+        }
+
+        if (!studentIds || (Array.isArray(studentIds) && studentIds.length === 0)) {
+            return res.render('generate-certificates', {
+                students,
+                courses,
+                templates,
+                filters: {},
+                successMessage: null,
+                errorMessage: "No students selected for generation."
+            });
+        }
 
         // Ensure it's an array of numbers
         if (!Array.isArray(studentIds)) {
@@ -37,22 +80,19 @@ export const handleGenerateSubmit = async (req: Request, res: Response) => {
         }
         const idsToProcess = studentIds.map((id: string) => parseInt(id));
 
-        const processedStudents = await processCertificates(idsToProcess);
+        const processedStudents = await processCertificates(idsToProcess, numericTemplateId);
 
         // Re-render the page with a success message
-        const { courses } = await getFiltersData();
-        const students = await getStudentsForGeneration(); // Reset list
-
         res.render('generate-certificates', {
             students,
             courses,
+            templates,
             filters: {},
             successMessage: `Successfully generated ${processedStudents.length} certificates!`,
             errorMessage: null
         });
     } catch (error: any) {
         console.error(error);
-        // TODO re-render the page with the error message
         res.redirect('/certificates/generate');
     }
 };

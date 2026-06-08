@@ -1,0 +1,99 @@
+{
+  "page": {
+    "backgroundColor": "#dbf2ff",
+    "borderColor": "#2655b5",
+    "borderWidth": 20
+  },
+
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "content": "Certificado",
+      "x": 700,
+      "y": 100,
+      "fontSize": 60,
+      "fontFamily": "Impact",
+      "color": "#2655b5"
+    },
+
+    {
+      "id": "intro",
+      "type": "text",
+      "content": "Certifica-se que",
+      "x": 700,
+      "y": 250,
+      "fontSize": 30,
+      "fontFamily": "Haettenschweiler",
+      "color": "#2655b5"
+    },
+
+    {
+      "id": "studentName",
+      "type": "placeholder",
+      "placeholder": "name",
+      "x": 700,
+      "y": 330,
+      "fontSize": 30,
+      "fontFamily": "Arial Narrow Bold",
+      "color": "#2655b5"
+    },
+
+    {
+      "id": "mainText",
+      "type": "text",
+      "content": "aluno com o número: {{id}} terminou o curso {{curso}}. O curso teve início em {{data_inicio}} e terminou em {{data_fim}}.",
+      "x": 700,
+      "y": 450,
+      "fontSize": 20,
+      "fontFamily": "Arial Narrow Bold",
+      "color": "#2655b5"
+    },
+
+    {
+      "id": "congratulations",
+      "type": "text",
+      "content": "Muitos parabéns!",
+      "x": 700,
+      "y": 650,
+      "fontSize": 50,
+      "fontFamily": "Haettenschweiler",
+      "fontStyle": "italic",
+      "color": "#2655b5"
+    },
+
+    {
+      "id": "signature",
+      "type": "text",
+      "content": "Assinatura do Responsável",
+      "x": 1200,
+      "y": 900,
+      "fontSize": 30,
+      "fontFamily": "Arial Narrow Bold",
+      "color": "#2655b5",
+      "borderWidth": 5,
+      "borderColor": "#2655b5"
+    },
+
+    {
+      "id": "star",
+      "type": "image",
+      "src": "../assets/estrela.png",
+      "x": 20,
+      "y": 900,
+      "width": 200,
+      "height": 200,
+      "rotation": 190
+    },
+
+    {
+      "id": "smiley",
+      "type": "image",
+      "src": "../assets/smiley.png",
+      "x": 1300,
+      "y": 20,
+      "width": 120,
+      "height": 120
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview Template</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #eaeaea;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .certificate-canvas {
+            width: 1485px;
+            height: 1050px;
+            position: relative;
+            box-sizing: border-box;
+            background-color: <%= layout.page.backgroundColor %>;
+            border: <%= layout.page.borderWidth %>px solid <%= layout.page.borderColor %>;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform-origin: center center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .template-element {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            white-space: nowrap;
+        }
+
+        /* If element x is 700 (near center of 1485), horizontally center it */
+        .template-element-centered {
+            left: 50% !important;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .signature-box {
+            border-top: 2px solid <%= layout.page.borderColor %>;
+            padding-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="certificate-canvas">
+    <% elements.forEach(element => { %>
+        <% if (element.isImage) { %>
+            <div class="template-element image-element" style="<%= element.style %>">
+                <img src="<%= element.content %>" style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+        <% } else if (element.isSignature) { %>
+            <div class="template-element signature-box" style="<%= element.style %>">
+                <%= element.content %>
+            </div>
+        <% } else { %>
+            <div class="template-element <%= element.isCentered ? 'template-element-centered' : '' %>" style="<%= element.style %>">
+                <%= element.content %>
+            </div>
+        <% } %>
+    <% }) %>
+</div>
+
+<script>
+    function adjustScale() {
+        const canvas = document.querySelector('.certificate-canvas');
+        const containerWidth = window.innerWidth;
+        const containerHeight = window.innerHeight;
+        const canvasWidth = 1485;
+        const canvasHeight = 1050;
+
+        const scaleX = containerWidth / canvasWidth;
+        const scaleY = containerHeight / canvasHeight;
+        const scale = Math.min(scaleX, scaleY) * 0.95; // scale to fit with margin
+
+        canvas.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', adjustScale);
+    window.addEventListener('load', adjustScale);
+</script>
+
+</body>
+</html>

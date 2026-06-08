@@ -3,96 +3,33 @@
     margin: 0;
 }
 
-h1{
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-size: 60px;
-    color: #2655b5;
-    place-self: center;
-}
 html, body {
     margin: 0;
     padding: 0;
 }
 
 body {
-    width: 210mm;
-    height: 297mm;
+    width: 297mm;
+    height: 210mm;
 
     box-sizing: border-box;
 
     border: 20px solid #2655b5;
     background-color: #dbf2ff;
+
     position: relative;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-
-    text-align: center;
+    overflow: hidden;
 }
 
-#um{
-    font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-size: 30px;
-    color:#2655b5;
-    place-self: center;
-}
-#aluno{
-    font-family: 'Arial Narrow Bold', sans-serif;
-    font-size: 30px;
-    place-self: center;
-    color:#2655b5
-}
-#texto{
-    font-family: 'Arial Narrow Bold', sans-serif;
-    font-size: 20px;
-    color:#2655b5;
-    place-self: center;
+/* ALL ELEMENTS ARE POSITIONED FROM JSON */
 
-}
-
-#parabens{
-    font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-style: italic;
-    font-size:50px;
-    color:#2655b5;
-    place-self:center;
-}
-
-#estrela{
+.template-element {
     position: absolute;
-    top: 900px;
-    left: 20px;
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    rotate: 190deg;
-}
-
-#smiley{
-    position: absolute;
-
-    top: 20px;
-    right: 20px;
-
-    width: 120px;
-    height: 120px;
-
-    object-fit: contain;
-}
-
-#assinatura{
-    font-family: 'Arial Narrow Bold', sans-serif;
-    font-size: 30px;
-    color:#2655b5;
-    align-self: flex-end;
-    margin-right: 40px;
-    margin-bottom: 40px;
-    border: #2655b5 solid 5px;
-}
-
-@page {
-    size: A4;
     margin: 0;
+    padding: 0;
+}
+
+.template-image {
+    position: absolute;
+    object-fit: contain;
 }
