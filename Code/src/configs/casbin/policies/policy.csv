@@ -1,6 +1,16 @@
 p, USER, /, GET
 p, USER, /certificates/generate, GET
 p, USER, /certificates/generate, POST
+p, USER, /templates, GET
+p, USER, /templates/create, GET
+p, USER, /templates/edit/*, GET
+p, USER, /templates/delete, GET
+p, USER, /templates/create, POST
+p, USER, /templates/edit/*, POST
+p, USER, /templates/delete, POST
+p, USER, /templates/update, POST
+p, USER, /templates/preview, GET
+p, USER, /templates/preview, POST
 
 p, ADMIN, /admin/maintenance, GET
 p, ADMIN, /admin/maintenance/delete, POST
