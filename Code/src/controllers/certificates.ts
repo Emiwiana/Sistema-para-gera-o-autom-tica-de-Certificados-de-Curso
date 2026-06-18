@@ -16,7 +16,13 @@ export const getGeneratePage = async (req: Request, res: Response) => {
 
         const { courses } = await getFiltersData();
         const students = await getStudentsForGeneration(courseId, year);
-        const templates = await templateDAO.getAllTemplates();
+        const allTemplates = await templateDAO.getAllTemplates();
+
+        // When a course is selected, show only templates for that course.
+        // When no filter is active, show all templates.
+        const templates = courseId != null
+            ? allTemplates.filter(t => t.courseId === courseId)
+            : allTemplates;
 
         res.render('generate-certificates', {
             students,

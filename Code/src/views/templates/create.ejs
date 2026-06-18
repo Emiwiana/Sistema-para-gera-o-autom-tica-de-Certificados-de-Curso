@@ -63,6 +63,15 @@
             <label>Name</label>
             <input type="text" name="name" required placeholder="My Certificate Template">
         </div>
+        <div class="field-group">
+            <label>Course</label>
+            <select name="courseId" id="courseId" required style="min-width:200px;">
+                <option value="">-- Select a course --</option>
+                <% (courses || []).forEach(function(course) { %>
+                    <option value="<%= course.id %>"><%= course.name %></option>
+                <% }); %>
+            </select>
+        </div>
     </div>
 
     <div class="section">

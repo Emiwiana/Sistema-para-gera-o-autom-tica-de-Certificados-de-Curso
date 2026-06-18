@@ -65,6 +65,15 @@
             <label>Name</label>
             <input type="text" name="name" value="<%= template.name %>" required>
         </div>
+        <div class="field-group">
+            <label>Course</label>
+            <select name="courseId" id="courseId" required style="min-width:200px;">
+                <option value="">-- Select a course --</option>
+                <% (courses || []).forEach(function(course) { %>
+                    <option value="<%= course.id %>" <%= template.courseId === course.id ? 'selected' : '' %>><%= course.name %></option>
+                <% }); %>
+            </select>
+        </div>
     </div>
 
     <div class="section">

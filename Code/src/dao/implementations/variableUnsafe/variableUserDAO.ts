@@ -60,4 +60,56 @@ export class VariableUserDAO implements IUserDAO {
         return null;
     }
 
+    async getAllUsers(): Promise<User[]> {
+        const users: User[] = [];
+        for (const cred of testCredentials) {
+            const user = testUsers.find(u => u.id === cred.id);
+            if (user) {
+                const name = user.firstName + " " + user.lastName;
+                users.push(new User(user.id, cred.email, name, user.role as userRole));
+            }
+        }
+        return users;
+    }
+
+    async getUserById(id: number): Promise<User | null> {
+        const user = testUsers.find(u => u.id === id);
+        const cred = testCredentials.find(c => c.id === id);
+        if (user && cred) {
+            const name = user.firstName + " " + user.lastName;
+            return new User(user.id, cred.email, name, user.role as userRole);
+        }
+        return null;
+    }
+
+    async createUser(firstName: string, lastName: string, email: string, hashedPassword: string, role: userRole): Promise<void> {
+        const id = Date.now();
+        testUsers.push({ id, firstName, lastName, role });
+        testCredentials.push({ id, email, password: hashedPassword });
+    }
+
+    async updateUser(id: number, firstName: string, lastName: string, email: string, role: userRole, hashedPassword?: string): Promise<void> {
+        const userIdx = testUsers.findIndex(u => u.id === id);
+        if (userIdx !== -1) {
+            testUsers[userIdx] = { id, firstName, lastName, role };
+        }
+        const credIdx = testCredentials.findIndex(c => c.id === id);
+        if (credIdx !== -1) {
+            testCredentials[credIdx].email = email;
+            if (hashedPassword) {
+                testCredentials[credIdx].password = hashedPassword;
+            }
+        }
+    }
+
+    async deleteUser(id: number): Promise<void> {
+        const userIdx = testUsers.findIndex(u => u.id === id);
+        if (userIdx !== -1) {
+            testUsers.splice(userIdx, 1);
+        }
+        const credIdx = testCredentials.findIndex(c => c.id === id);
+        if (credIdx !== -1) {
+            testCredentials.splice(credIdx, 1);
+        }
+    }
 }

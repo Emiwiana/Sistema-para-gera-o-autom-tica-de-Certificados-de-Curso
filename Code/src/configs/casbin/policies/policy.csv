@@ -18,5 +18,11 @@ p, ADMIN, /admin/maintenance/schedule, POST
 p, ADMIN, /admin/maintenance/delete-before, POST
 p, ADMIN, /admin/maintenance/delete-before-student-number, POST
 p, ADMIN, /admin/maintenance/delete-by-course, POST
+p, ADMIN, /admin/users, GET
+p, ADMIN, /admin/users/create, GET
+p, ADMIN, /admin/users/create, POST
+p, ADMIN, /admin/users/edit/*, GET
+p, ADMIN, /admin/users/edit/*, POST
+p, ADMIN, /admin/users/delete/*, POST
 
-g, ADMIN, USER
+g, ADMIN, USER

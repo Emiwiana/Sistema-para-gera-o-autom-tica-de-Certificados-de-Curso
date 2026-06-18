@@ -24,6 +24,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Course</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,10 +32,11 @@
     <tbody>
 
     <% templates.forEach(template => { %>
-
+        <% const matchedCourse = (courses || []).find(c => c.id === template.courseId); %>
         <tr>
             <td><%= template.id %></td>
             <td><%= template.name %></td>
+            <td><%= matchedCourse ? matchedCourse.name : (template.courseId || 'None') %></td>
 
             <td>
 

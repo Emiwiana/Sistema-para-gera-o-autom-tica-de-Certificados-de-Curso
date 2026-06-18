@@ -1,10 +1,11 @@
 {
   "id": 1780926329684,
   "name": "Template",
+  "courseId": 101,
   "layout": {
     "page": {
       "backgroundColor": "#dbf2ff",
-      "borderColor": "#2655b5",
+      "borderColor": "#090971",
       "borderWidth": 20
     },
     "elements": [
@@ -12,7 +13,7 @@
         "id": "title",
         "type": "text",
         "content": "Certificado",
-        "x": 700,
+        "x": 500,
         "y": 100,
         "fontSize": 60,
         "fontFamily": "Impact",
@@ -62,7 +63,7 @@
       {
         "id": "signature",
         "type": "text",
-        "content": "Assinatura do Responsável",
+        "content": "Assinatura",
         "x": 1200,
         "y": 900,
         "fontSize": 30,

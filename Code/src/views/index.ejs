@@ -1,26 +1,51 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <title>Certificate Generator Test Page</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; }
-        .card { max-width: 760px; padding: 1.5rem; border: 1px solid #ccc; border-radius: 10px; }
-        a { display: inline-block; margin-right: 0.75rem; margin-top: 0.5rem; text-decoration: none; }
-        button { padding: 0.6rem 1rem; font-size: 1rem; cursor: pointer; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.5;
+        }
+
+        .card {
+            max-width: 760px;
+            padding: 1.5rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        a {
+            display: inline-block;
+            margin-right: 0.75rem;
+            margin-top: 0.5rem;
+            text-decoration: none;
+        }
+
+        button {
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
-<div class="card">
-    <h1>Certificate Generator</h1>
-    <p>The app is running locally.</p>
-    <p>Use these links to test the available entry points:</p>
-    <ul>
-        <li><a href="/certificates/generate">Certificate PDF Generation</a> </li>
-        <li><a href="/admin/maintenance">Repository Maintenance</a> </li>
-        <li><a href="/templates">Template Editor</a> </li>
-        <li><a href="/auth/logout">Logout</a></li>
-    </ul>
-</div>
+    <div class="card">
+        <h1>Certificate Generator</h1>
+        <p>The app is running locally.</p>
+        <p>Use these links to test the available entry points:</p>
+        <ul>
+            <li><a href="/certificates/generate">Certificate PDF Generation</a> </li>
+            <li><a href="/admin/maintenance">Repository Maintenance</a> </li>
+            <li><a href="/admin/users">User Management</a> </li>
+            <li><a href="/templates">Template Editor</a> </li>
+            <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+    </div>
 </body>
+
 </html>

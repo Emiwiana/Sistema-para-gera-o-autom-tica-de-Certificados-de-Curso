@@ -30,13 +30,14 @@ export class Template {
     private readonly _id: number;
     private readonly _name: string;
     private readonly _layout: TemplateLayout;
+    private readonly _courseId: number;
 
-    constructor(id: number, name: string, layout: TemplateLayout) {
+    constructor(id: number, name: string, layout: TemplateLayout, courseId: number) {
         this._id = id;
         this._name = name;
         this._layout = layout;
+        this._courseId = courseId;
     }
-
 
     public get id(): number {
         return this._id;
@@ -50,31 +51,32 @@ export class Template {
         return this._layout;
     }
 
-    
+    public get courseId(): number {
+        return this._courseId;
+    }
+
     // Returns the element with the given ID, or undefined if not found.
-     
     public getElement(elementId: string): TemplateElement | undefined {
         return this._layout.elements.find(e => e.id === elementId);
     }
 
-    
-    //Serializes the template into a plain JSON-compatible object.
-    
+    // Serializes the template into a plain JSON-compatible object.
     public toJSON(): object {
         return {
             id: this._id,
             name: this._name,
+            courseId: this._courseId,
             layout: this._layout,
         };
     }
 
     // Creates a Template instance from a parsed JSON object.
-    
     public static fromJSON(data: any): Template {
         return new Template(
             data.id,
             data.name,
             data.layout as TemplateLayout,
+            data.courseId,
         );
     }
 }

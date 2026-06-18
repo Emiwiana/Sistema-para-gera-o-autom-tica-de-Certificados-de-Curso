@@ -7,16 +7,19 @@ import {
     getAllTemplates,
     getTemplateByID, updateTemplate
 } from "../services/certificate/template";
+import { getFiltersData } from '../services/certificate/certificates';
 
 export const getTemplatePage = async (req: Request, res: Response) => {
     const templates = await getAllTemplates();
-    res.render('templates/index', { templates });
+    const { courses } = await getFiltersData();
+    res.render('templates/index', { templates, courses });
 };
 
-export const getCreateTemplatePage = (req: Request, res: Response) => {
-    res.render('templates/create');
+export const getCreateTemplatePage = async (req: Request, res: Response) => {
+    const { courses } = await getFiltersData();
+    res.render('templates/create', { courses });
 };
-    
+
 export const getEditTemplatePage = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     if (isNaN(id)) {
@@ -27,6 +30,9 @@ export const getEditTemplatePage = async (req: Request, res: Response) => {
     if (!template) {
         return res.status(404).send("Template not found");
     }
+
+    const { courses } = await getFiltersData();
+
     // Pre-extract elements for the view so it doesn't have to search
     const layout = template.layout;
     const elements = {
@@ -39,23 +45,32 @@ export const getEditTemplatePage = async (req: Request, res: Response) => {
     };
     const images = layout.elements.filter((e: { type: string; }) => e.type === 'image');
 
-    res.render("templates/edit", { template, elements, images });
+    res.render("templates/edit", { template, elements, images, courses });
 };
 
 
 
 export const templateCreate = async (req: Request, res: Response) => {
-    const { name } = req.body;
+    const { name, courseId } = req.body;
+    const numericCourseId = parseInt(courseId, 10);
+    if (!name || isNaN(numericCourseId)) {
+        const { courses } = await getFiltersData();
+        return res.render('templates/create', {
+            courses,
+            errorMessage: 'Name and course are required.'
+        });
+    }
     const layout = buildLayoutFromForm(req.body);
-    await createTemplate(name, layout)
+    await createTemplate(name, layout, numericCourseId);
     res.redirect('/templates');
-}; 
+};
 
 export const templateUpdate = async (req: Request, res: Response) => {
-    const { id, name } = req.body;
+    const { id, name, courseId } = req.body;
     const numericId = parseInt(id, 10);
+    const numericCourseId = parseInt(courseId, 10);
     const layout = buildLayoutFromForm(req.body);
-    await updateTemplate(numericId, name, layout)
+    await updateTemplate(numericId, name, layout, numericCourseId);
     res.redirect(`/templates/edit/${numericId}`);
 };
 

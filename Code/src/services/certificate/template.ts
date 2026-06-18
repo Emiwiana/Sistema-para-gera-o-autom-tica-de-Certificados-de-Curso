@@ -111,13 +111,13 @@ export async function getTemplateByID(id: number) {
     return await dao.getTemplateById(id);
 }
 
-export async function createTemplate(name: string, layout: TemplateLayout) {
-    const newTemplate = new Template(Date.now(), name, layout);
+export async function createTemplate(name: string, layout: TemplateLayout, courseId: number) {
+    const newTemplate = new Template(Date.now(), name, layout, courseId);
     await dao.saveTemplate(newTemplate);
 }
 
-export async function updateTemplate(id: number, name: string, layout: TemplateLayout) {
-    const updatedTemplate = new Template(id, name, layout);
+export async function updateTemplate(id: number, name: string, layout: TemplateLayout, courseId: number) {
+    const updatedTemplate = new Template(id, name, layout, courseId);
     await dao.updateTemplate(updatedTemplate);
 }
 
