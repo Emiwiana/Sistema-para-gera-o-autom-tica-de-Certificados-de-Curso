@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import {getFiltersData, getStudentsForGeneration, processCertificates} from "../services/certificate/certificates";
+import {getFiltersData, getStudentsWithPdfStatus, processCertificates, sendCertificateEmails} from "../services/certificate/certificates";
 import {TemplateDAO} from "../dao/implementations/local/templateDAO";
 
 const templateDAO = new TemplateDAO();
@@ -15,7 +15,7 @@ export const getGeneratePage = async (req: Request, res: Response) => {
             : undefined;
 
         const { courses } = await getFiltersData();
-        const students = await getStudentsForGeneration(courseId, year);
+        const students = await getStudentsWithPdfStatus(courseId, year);
         const allTemplates = await templateDAO.getAllTemplates();
 
         // When a course is selected, show only templates for that course.
@@ -33,6 +33,7 @@ export const getGeneratePage = async (req: Request, res: Response) => {
             errorMessage: null
         });
     } catch (error) {
+        console.error(error);
         res.status(500).send("Error loading generation page.");
     }
 };
@@ -44,7 +45,7 @@ export const handleGenerateSubmit = async (req: Request, res: Response) => {
 
         const templates = await templateDAO.getAllTemplates();
         const { courses } = await getFiltersData();
-        const students = await getStudentsForGeneration();
+        const students = await getStudentsWithPdfStatus();
 
         if (!templateId) {
             return res.render('generate-certificates', {
@@ -88,13 +89,59 @@ export const handleGenerateSubmit = async (req: Request, res: Response) => {
 
         const processedStudents = await processCertificates(idsToProcess, numericTemplateId);
 
+        // Update students so the view reflects the new hasPdf status correctly
+        const updatedStudents = await getStudentsWithPdfStatus();
+
         // Re-render the page with a success message
+        res.render('generate-certificates', {
+            students: updatedStudents,
+            courses,
+            templates,
+            filters: {},
+            successMessage: `Successfully generated ${processedStudents.length} certificates!`,
+            errorMessage: null
+        });
+    } catch (error: any) {
+        console.error(error);
+        res.redirect('/certificates/generate');
+    }
+};
+
+export const handleEmailSubmit = async (req: Request, res: Response) => {
+    try {
+        let { studentIds } = req.body;
+        
+        const templates = await templateDAO.getAllTemplates();
+        const { courses } = await getFiltersData();
+        const students = await getStudentsWithPdfStatus();
+
+        if (!studentIds || (Array.isArray(studentIds) && studentIds.length === 0)) {
+            return res.render('generate-certificates', {
+                students,
+                courses,
+                templates,
+                filters: {},
+                successMessage: null,
+                errorMessage: "No students selected for emailing."
+            });
+        }
+
+        if (!Array.isArray(studentIds)) {
+            studentIds = [studentIds];
+        }
+        const idsToProcess = studentIds.map((id: string) => parseInt(id));
+
+        const { sent, skipped } = await sendCertificateEmails(idsToProcess);
+
+        const skippedMessage = skipped.length > 0 ? ` (${skipped.length} skipped - PDF not found)` : '';
+        const successMessage = `Successfully sent ${sent.length} emails!${skippedMessage}`;
+
         res.render('generate-certificates', {
             students,
             courses,
             templates,
             filters: {},
-            successMessage: `Successfully generated ${processedStudents.length} certificates!`,
+            successMessage: successMessage,
             errorMessage: null
         });
     } catch (error: any) {

@@ -1,14 +1,18 @@
 
 import { generatePdfCertificates } from './generator';
+import { sendUserCertificateEmail } from './sendEmail';
 import {ICourseDAO} from "../../dao/interfaces/ICourseDAO";
 import {IStudentDAO} from "../../dao/interfaces/IStudentDAO";
 import {VariableStudentDAO} from "../../dao/implementations/variableUnsafe/variableStudentDAO";
 import {VariableCourseDAO} from "../../dao/implementations/variableUnsafe/variableCourseDAO";
 import {TemplateDAO} from "../../dao/implementations/local/templateDAO";
+import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
+import {Student} from "../../model/student";
 
 const studentDao: IStudentDAO = new VariableStudentDAO();
 const courseDao: ICourseDAO = new VariableCourseDAO();
 const templateDao = new TemplateDAO();
+const certificateDao = new CertificateDAO();
 
 export async function getFiltersData() {
     const courses = await courseDao.getAllCourses();
@@ -17,6 +21,23 @@ export async function getFiltersData() {
 
 export async function getStudentsForGeneration(courseId?: number, year?: number) {
     return await studentDao.getEligibleStudents({ courseId, year });
+}
+
+/**
+ * Returns students annotated with a `hasPdf` flag indicating whether their
+ * certificate PDF already exists on disk.
+ */
+export async function getStudentsWithPdfStatus(courseId?: number, year?: number): Promise<(Student & { hasPdf: boolean })[]> {
+    const students = await studentDao.getEligibleStudents({ courseId, year });
+    const existingCerts = await certificateDao.getAllCertificates();
+    const existingFileNames = new Set(existingCerts.map(c => c.name));
+
+    return students.map(student => {
+        // Create a proxy object that extends Student with hasPdf
+        return Object.assign(Object.create(Object.getPrototypeOf(student)), student, {
+            hasPdf: existingFileNames.has(student.certificateFileName)
+        });
+    });
 }
 
 export async function processCertificates(studentIds: number[], templateId: number) {
@@ -37,4 +58,31 @@ export async function processCertificates(studentIds: number[], templateId: numb
     await generatePdfCertificates(students, template.layout);
 
     return students;
+}
+
+/**
+ * Sends certificate emails to selected students.
+ * Only sends to students whose PDF has already been generated.
+ * Returns a summary of which students received emails and which were skipped.
+ */
+export async function sendCertificateEmails(studentIds: number[]): Promise<{ sent: Student[]; skipped: Student[] }> {
+    if (!studentIds || studentIds.length === 0) {
+        throw new Error("No students selected for emailing.");
+    }
+
+    const students = await studentDao.getStudentsByIds(studentIds);
+    const sent: Student[] = [];
+    const skipped: Student[] = [];
+
+    for (const student of students) {
+        const certificate = await certificateDao.getCertificateByStudent(student);
+        if (!certificate) {
+            skipped.push(student);
+            continue;
+        }
+        await sendUserCertificateEmail(student, certificate.path);
+        sent.push(student);
+    }
+
+    return { sent, skipped };
 }

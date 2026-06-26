@@ -29,14 +29,28 @@
             <input type="number" name="year" placeholder="e.g., 2024" value="<%= filters.year || '' %>">
 
             <button type="submit">Apply Filters</button>
-            <a href="/certificates/generate">Clear</a>
+            <a href="/certificates/generate">Clear All</a>
         </form>
+
+        <% if (filters.courseId || filters.year) { %>
+        <div class="active-filters">
+            <span style="font-weight: 600;">Active Filters:</span>
+            <% if (filters.courseId) { 
+                const courseName = courses.find(c => c.id === filters.courseId)?.name || filters.courseId;
+            %>
+                <a href="?year=<%= filters.year || '' %>" class="filter-chip">Course: <%= courseName %> &times;</a>
+            <% } %>
+            <% if (filters.year) { %>
+                <a href="?courseId=<%= filters.courseId || '' %>" class="filter-chip">Year: <%= filters.year %> &times;</a>
+            <% } %>
+        </div>
+        <% } %>
     </div>
 
-    <form action="/certificates/generate" method="POST">
+    <form method="POST">
         <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <label style="font-weight: 600;">Select Template:</label>
-            <select name="templateId" required style="min-width: 250px;">
+            <label style="font-weight: 600;">Select Template (For Generation):</label>
+            <select name="templateId" style="min-width: 250px;">
                 <option value="">-- Choose a template --</option>
                 <% templates.forEach(tpl => { %>
                     <option value="<%= tpl.id %>"><%= tpl.name %> (ID: <%= tpl.id %>)</option>
@@ -56,28 +70,41 @@
                 <th>Student Name</th>
                 <th>Email</th>
                 <th>Course</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
             <% if (students.length === 0) { %>
-                <tr><td colspan="4">No eligible students found.</td></tr>
+                <tr><td colspan="5">No eligible students found.</td></tr>
             <% } %>
 
             <% students.forEach(student => { %>
                 <tr>
-                    <td><input type="checkbox" name="studentIds" value="<%= student.id %>"></td>
+                    <td><input type="checkbox" name="studentIds" value="<%= student.id %>" class="student-checkbox" data-has-pdf="<%= student.hasPdf %>"></td>
                     <td><%= student.name %></td>
                     <td><%= student.email %></td>
                     <td><%= student.course.name %></td>
+                    <td>
+                        <% if (student.hasPdf) { %>
+                            <span class="badge success-badge">✅ PDF Ready</span>
+                        <% } else { %>
+                            <span class="badge secondary-badge">⚪ Not Generated</span>
+                        <% } %>
+                    </td>
                 </tr>
             <% }) %>
             </tbody>
         </table>
 
         <% if (students.length > 0) { %>
-            <button type="submit" class="success-btn">
-                Generate Selected Certificates
-            </button>
+            <div class="action-buttons">
+                <button type="submit" class="success-btn" formaction="/certificates/generate" id="generateBtn">
+                    Generate Selected Certificates
+                </button>
+                <button type="submit" class="primary-btn" formaction="/certificates/email" id="emailBtn">
+                    ✉️ Email Selected Students
+                </button>
+            </div>
         <% } %>
     </form>
 </div>
@@ -87,7 +114,7 @@
         if (!selectAll) return;
         selectAll.addEventListener('change', (e) => {
             const checked = e.target.checked;
-            document.querySelectorAll('input[name="studentIds"]').forEach(cb => cb.checked = checked);
+            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = checked);
         });
     })();
 </script>

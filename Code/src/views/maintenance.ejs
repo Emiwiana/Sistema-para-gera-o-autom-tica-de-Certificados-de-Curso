@@ -8,13 +8,33 @@
 <body>
 <h1>Repository Maintenance</h1>
 
+<% const courseQuery = selectedCourseId ? `&courseId=${selectedCourseId}` : ''; %>
+<% const sortQuery = sortParam && sortParam !== 'newest' ? `&sort=${sortParam}` : ''; %>
+
+<div style="margin-bottom: 1.5rem;">
+    <% if (selectedCourseId || (sortParam && sortParam !== 'newest')) { %>
+    <div class="active-filters">
+        <span style="font-weight: 600;">Active Filters:</span>
+        <% if (sortParam && sortParam !== 'newest') { %>
+            <a href="/admin/maintenance?<%= selectedCourseId ? `courseId=${selectedCourseId}` : '' %>" class="filter-chip">Sort: <%= sortParam %> &times;</a>
+        <% } %>
+        <% if (selectedCourseId) { 
+            const courseName = (courses || []).find(c => String(c.id) === String(selectedCourseId))?.name || selectedCourseId;
+        %>
+            <a href="/admin/maintenance?sort=<%= sortParam || 'newest' %>" class="filter-chip">Course: <%= courseName %> &times;</a>
+        <% } %>
+        <a href="/admin/maintenance" style="margin-left: 10px; font-size: 0.9rem;">Clear All</a>
+    </div>
+    <% } %>
+</div>
+
 <section class="section">
     <h2>Age</h2>
     <div class="section-content">
         <div class="section-item">
             <strong>Sort by Age:</strong>
-            <a href="/admin/maintenance?sort=newest"><button>Newest First</button></a>
-            <a href="/admin/maintenance?sort=oldest"><button>Oldest First</button></a>
+            <a href="/admin/maintenance?sort=newest<%= courseQuery %>"><button>Newest First</button></a>
+            <a href="/admin/maintenance?sort=oldest<%= courseQuery %>"><button>Oldest First</button></a>
         </div>
         <div class="section-item">
             <strong>Delete All Before Date:</strong>
@@ -31,8 +51,8 @@
     <div class="section-content">
         <div class="section-item">
             <strong>Sort by Student Number:</strong>
-            <a href="/admin/maintenance?sort=increasing"><button>Increasing</button></a>
-            <a href="/admin/maintenance?sort=decreasing"><button>Decreasing</button></a>
+            <a href="/admin/maintenance?sort=increasing<%= courseQuery %>"><button>Increasing</button></a>
+            <a href="/admin/maintenance?sort=decreasing<%= courseQuery %>"><button>Decreasing</button></a>
         </div>
         <div class="section-item">
             <strong>Delete All Before Student Number:</strong>
@@ -49,6 +69,7 @@
     <div class="section-content">
         <div class="section-item">
             <form action="/admin/maintenance" method="GET" class="form-inline">
+                <input type="hidden" name="sort" value="<%= sortParam || 'newest' %>">
                 <label style="margin-right:6px;"><strong>Filter by Course:</strong></label>
                 <select name="courseId">
                     <option value="">All Courses</option>

@@ -15,9 +15,9 @@ const configOptions = {
 const transporter = nodemailer.createTransport(configOptions);
 const dao = new CertificateDAO()
 
-export const sendUserCertificateEmail = async (student: Student) => {
+export const sendUserCertificateEmail = async (student: Student, filePath?: string) => {
     try {
-        const certificate = dao.getCertificateByStudent(student);
+        const certificate = await dao.getCertificateByStudent(student);
         if (certificate == null) {return}
 
         const mailOptions: SendMailOptions = {
@@ -28,14 +28,14 @@ export const sendUserCertificateEmail = async (student: Student) => {
       <!DOCTYPE html>
       <html>
         <body>
-          <h1>O seu certificado for gerado com sucesso, ${student.name}!</h1>
+          <h1>O seu certificado foi gerado com sucesso, ${student.name}!</h1>
           <p>Em anexo, encontra-se o seu certificado do curso ${student.course.name}!</p>
         </body>
       </html>`,
             attachments: [
                 {
-                    //filename: student.certificateFileName,
-                    //content: certificate,
+                    filename: student.certificateFileName,
+                    path: filePath || certificate.path,
                 }
             ]
         };

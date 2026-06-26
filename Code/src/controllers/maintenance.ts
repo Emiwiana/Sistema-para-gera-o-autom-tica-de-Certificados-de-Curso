@@ -22,6 +22,7 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     res.render('maintenance', {
         files,
         sortOrder,
+        sortParam,
         courses,
         selectedCourseId: courseIdQuery
     });

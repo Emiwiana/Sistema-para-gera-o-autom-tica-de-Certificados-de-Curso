@@ -1,6 +1,8 @@
 p, USER, /, GET
 p, USER, /certificates/generate, GET
 p, USER, /certificates/generate, POST
+p, USER, /certificates/email, GET
+p, USER, /certificates/email, POST
 p, USER, /templates, GET
 p, USER, /templates/create, GET
 p, USER, /templates/edit/*, GET
@@ -25,4 +27,4 @@ p, ADMIN, /admin/users/edit/*, GET
 p, ADMIN, /admin/users/edit/*, POST
 p, ADMIN, /admin/users/delete/*, POST
 
-g, ADMIN, USER
+g, ADMIN, USER

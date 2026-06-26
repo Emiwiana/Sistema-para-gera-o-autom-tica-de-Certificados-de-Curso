@@ -10,9 +10,19 @@ import {
 import { getFiltersData } from '../services/certificate/certificates';
 
 export const getTemplatePage = async (req: Request, res: Response) => {
-    const templates = await getAllTemplates();
+    let templates = await getAllTemplates();
+    const searchQuery = (req.query.search as string) || '';
+
+    if (searchQuery.trim()) {
+        const lowerQuery = searchQuery.trim().toLowerCase();
+        templates = templates.filter(t => 
+            t.name.toLowerCase().includes(lowerQuery) || 
+            String(t.id) === lowerQuery
+        );
+    }
+
     const { courses } = await getFiltersData();
-    res.render('templates/index', { templates, courses });
+    res.render('templates/index', { templates, courses, searchQuery });
 };
 
 export const getCreateTemplatePage = async (req: Request, res: Response) => {
