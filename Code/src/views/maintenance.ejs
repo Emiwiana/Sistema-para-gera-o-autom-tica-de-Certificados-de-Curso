@@ -128,15 +128,12 @@
             <td><%= file.name %></td>
             <td><%= file.createdAt.toLocaleString() %></td>
             <td>
+                <a href="/admin/maintenance/preview/<%= file.name %>" target="_blank">
+                    <button type="button">Preview</button>
+                </a>
                 <form action="/admin/maintenance/delete" method="POST" class="form-inline" onsubmit="return confirm('Delete this file permanently?');">
-                    <input type="hidden" name="fileName" value="<%= file.fileName %>">
+                    <input type="hidden" name="fileName" value="<%= file.name %>">
                     <button type="submit" class="danger-btn">Delete Now</button>
-                </form>
-
-                <form action="/admin/maintenance/schedule" method="POST" class="form-inline" style="margin-left: 10px;">
-                    <input type="hidden" name="fileName" value="<%= file.fileName %>">
-                    <input type="datetime-local" name="scheduledDate" required>
-                    <button type="submit" class="schedule-btn">Schedule</button>
                 </form>
             </td>
         </tr>

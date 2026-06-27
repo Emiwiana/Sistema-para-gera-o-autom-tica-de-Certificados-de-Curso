@@ -8,6 +8,8 @@ import {
 } from "../services/maintenance/maintenance";
 import { getFiltersData } from '../services/certificate/certificates';
 import {Certificate} from "../model/certificate";
+import path from "path";
+import {CERTIFICATE_REPOSITORY_DIR} from "../configs/localRepository";
 
 
 export const getMaintenancePage = async (req: Request, res: Response) => {
@@ -33,14 +35,19 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     });
 };
 
-export const scheduleDeletion = async (req: Request, res: Response) => {
-    const { fileName, scheduledDate } = req.body;
+export const previewCertificate = async (req: Request, res: Response) => {
+    const { fileName } = req.params;
 
-    // TODO: Pensei que seria engraçado acrescentar, por agora fica opcional
-    //se tivermos tempo, fazemos isto
-    console.log(`Scheduled ${fileName} for deletion on ${scheduledDate}`);
-    // For now, just redirect back
-    res.redirect('/admin/maintenance');
+    // Construct the absolute path to the file
+    if (typeof fileName === "string") {
+        const filePath = path.resolve(CERTIFICATE_REPOSITORY_DIR, fileName);
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                console.error(`Error serving PDF preview for ${fileName}:`, err);
+                res.status(404).send("Certificate file not found or has been deleted.");
+            }
+        });
+    }
 };
 
 const createDeletionController = (

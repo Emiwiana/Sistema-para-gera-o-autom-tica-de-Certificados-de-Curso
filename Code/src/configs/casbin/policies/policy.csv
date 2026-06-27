@@ -14,9 +14,10 @@ p, USER, /templates/update, POST
 p, USER, /templates/preview, GET
 p, USER, /templates/preview, POST
 
+
 p, ADMIN, /admin/maintenance, GET
+p, ADMIN, /admin/maintenance/preview/*, GET
 p, ADMIN, /admin/maintenance/delete, POST
-p, ADMIN, /admin/maintenance/schedule, POST
 p, ADMIN, /admin/maintenance/delete-before, POST
 p, ADMIN, /admin/maintenance/delete-before-student-number, POST
 p, ADMIN, /admin/maintenance/delete-by-course, POST
