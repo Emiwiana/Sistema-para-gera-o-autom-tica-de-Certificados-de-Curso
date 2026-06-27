@@ -125,7 +125,7 @@
 
     <% files.forEach(function(file) { %>
         <tr>
-            <td><%= file.fileName %></td>
+            <td><%= file.name %></td>
             <td><%= file.createdAt.toLocaleString() %></td>
             <td>
                 <form action="/admin/maintenance/delete" method="POST" class="form-inline" onsubmit="return confirm('Delete this file permanently?');">
