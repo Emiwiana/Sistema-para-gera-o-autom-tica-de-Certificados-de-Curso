@@ -1,20 +1,47 @@
 import path from "path";
 import fs from "fs/promises";
-import { Student } from "../../../model/student";
-import { CertificateRepositoryDir } from "../../../configs/localRepository";
-import { Certificate } from "../../../model/certificate";
+import {Student} from "../../../model/student";
+import {CERTIFICATE_REPOSITORY_DIR} from "../../../configs/localRepository";
+import {Certificate} from "../../../model/certificate";
 
 export class CertificateDAO {
 
     // Extracted helper method to centralize file reading and object instantiation
     private async createCertificateFromFile(fileName: string): Promise<Certificate | null> {
         try {
-            const filePath = path.join(CertificateRepositoryDir, fileName);
+            const filePath = path.join(CERTIFICATE_REPOSITORY_DIR, fileName);
             const stats = await fs.stat(filePath);
             return new Certificate(fileName, filePath, stats.birthtime, stats.birthtimeMs);
         } catch (error) {
             return null;
         }
+    }
+
+    private async getCertificateSize(fileName: string): Promise<number> {
+        const file = path.join(CERTIFICATE_REPOSITORY_DIR, fileName);
+        const stats = await fs.stat(file);
+        if (stats.isFile()) {
+            return stats.size;
+        }
+        return 0;
+    }
+
+    async getAllCertificatesSize(): Promise<number> {
+        let size = 0;
+        try {
+            const files = await fs.readdir(CERTIFICATE_REPOSITORY_DIR);
+            for (const file of files) {
+                size += await this.getCertificateSize(file);
+            }
+        } catch (error: any) {
+            if (error.code === 'ENOENT') {
+                console.warn(`Repository directory not found. Assuming size is 0 bytes.`);
+                return 0;
+            }
+            console.error("Error calculating repository size:", error);
+            throw error;
+        }
+        return size;
     }
 
     async getCertificateByStudent(student: Student): Promise<Certificate | null> {
@@ -27,7 +54,7 @@ export class CertificateDAO {
 
     async getAllCertificates(): Promise<Certificate[]> {
         try {
-            const files = await fs.readdir(CertificateRepositoryDir);
+            const files = await fs.readdir(CERTIFICATE_REPOSITORY_DIR);
 
             const certificates = await Promise.all(
                 files.map(fileName => this.createCertificateFromFile(fileName))
@@ -43,7 +70,7 @@ export class CertificateDAO {
 
     async deleteCertificate(certificate: Certificate): Promise<boolean> {
         try {
-            const filePath = path.join(CertificateRepositoryDir, certificate.name);
+            const filePath = path.join(CERTIFICATE_REPOSITORY_DIR, certificate.name);
             await fs.unlink(filePath);
             return true;
         } catch (error) {

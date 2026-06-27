@@ -1,7 +1,7 @@
 import { IUserDAO } from "../../interfaces/IUserDAO";
 import { User, userRole } from "../../../model/user";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
-import {pool} from "../../../configs/authDB";
+import {getAuthDatabasePool} from "../../../configs/authDB";
 
 interface EmployeeJoinRow extends RowDataPacket {
     EmployeeID: number;
@@ -29,7 +29,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
@@ -56,7 +56,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
+            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [email.trim()]);
 
             if (rows.length === 0) {
                 return null;
@@ -84,7 +84,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool().execute<EmployeeJoinRow[]>(query);
+            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query);
             return rows.map(row => {
                 const fullName = `${row.FirstName} ${row.LastName}`;
                 const email = Buffer.isBuffer(row.Email) ? row.Email.toString('utf8') : String(row.Email);
@@ -112,7 +112,7 @@ export class SqlUserDAO implements IUserDAO {
         `;
 
         try {
-            const [rows] = await pool().execute<EmployeeJoinRow[]>(query, [id]);
+            const [rows] = await getAuthDatabasePool().execute<EmployeeJoinRow[]>(query, [id]);
 
             if (rows.length === 0) return null;
 
@@ -129,7 +129,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async createUser(firstName: string, lastName: string, email: string, hashedPassword: string, role: userRole): Promise<void> {
-        const conn = await pool().getConnection();
+        const conn = await getAuthDatabasePool().getConnection();
         try {
             await conn.beginTransaction();
 
@@ -156,7 +156,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async updateUser(id: number, firstName: string, lastName: string, email: string, role: userRole, hashedPassword?: string): Promise<void> {
-        const conn = await pool().getConnection();
+        const conn = await getAuthDatabasePool().getConnection();
         try {
             await conn.beginTransaction();
 
@@ -188,7 +188,7 @@ export class SqlUserDAO implements IUserDAO {
     }
 
     async deleteUser(id: number): Promise<void> {
-        const conn = await pool().getConnection();
+        const conn = await getAuthDatabasePool().getConnection();
         try {
             await conn.beginTransaction();
 

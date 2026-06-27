@@ -20,4 +20,4 @@ router.use('/admin', adminRoutes)
 router.use('/certificates', certificateRoutes)
 router.use('/templates', templatesRoutes)
 
-module.exports = router;
+module.exports = router;

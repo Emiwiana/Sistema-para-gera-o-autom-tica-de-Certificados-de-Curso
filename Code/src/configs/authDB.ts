@@ -7,7 +7,7 @@ let poolInstance: mysql.Pool | null = null;
 //for some reason
 //So I guess pool is a function instead of a variable now, to force it to only load
 //configs the first time it's called
-export const pool = (): mysql.Pool => {
+export const getAuthDatabasePool = (): mysql.Pool => {
     // The pool is only instantiated the first time this function is called
     if (!poolInstance) {
         poolInstance = mysql.createPool({

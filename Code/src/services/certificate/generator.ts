@@ -3,7 +3,7 @@ import fs from "fs";
 import {pathToFileURL} from "node:url";
 import puppeteer, {Page} from "puppeteer";
 import {Student} from "../../model/student";
-import {CertificateRepositoryDir} from "../../configs/localRepository";
+import {CERTIFICATE_REPOSITORY_DIR} from "../../configs/localRepository";
 import {TemplateLayout} from "../../model/template";
 import {prepareElementsForRender} from "./renderHelper";
 
@@ -11,7 +11,7 @@ const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'te
 
 export async function generatePdfCertificates(students: Student[], layout: TemplateLayout) {
     // ensures directory exists
-    fs.mkdirSync(CertificateRepositoryDir, { recursive: true });
+    fs.mkdirSync(CERTIFICATE_REPOSITORY_DIR, { recursive: true });
 
     // ensure temp html directory exists
     fs.mkdirSync(path.dirname(tempCertificatePath), { recursive: true });
@@ -49,7 +49,7 @@ export async function generatePdfCertificates(students: Student[], layout: Templ
 
 async function generatePDF(student : Student, page:Page) {
     const fileName: string = student.certificateFileName;
-    const fullOutputPath = path.join(CertificateRepositoryDir, fileName);
+    const fullOutputPath = path.join(CERTIFICATE_REPOSITORY_DIR, fileName);
     const fileUrl = pathToFileURL(path.resolve(tempCertificatePath)).href;
 
     await page.goto(fileUrl, {

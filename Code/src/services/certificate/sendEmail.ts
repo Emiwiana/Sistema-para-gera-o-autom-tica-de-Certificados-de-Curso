@@ -4,11 +4,11 @@ import {Student} from "../../model/student";
 import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
 
 const configOptions = {
-    host: emailConfigs.EmailHost,
+    host: emailConfigs.EMAIL_HOST,
     port: 587,
     auth: {
-        user: emailConfigs.EmailUser,
-        pass: emailConfigs.EmailPassword,
+        user: emailConfigs.EMAIL_USER,
+        pass: emailConfigs.EMAIL_PASSWORD,
     },
 };
 
@@ -21,7 +21,7 @@ export const sendUserCertificateEmail = async (student: Student, filePath?: stri
         if (certificate == null) {return}
 
         const mailOptions: SendMailOptions = {
-            from: emailConfigs.EmailSender,
+            from: emailConfigs.EMAIL_SENDER,
             to: student.email,
             subject: `Certificado ${student.name}!`,
             html: `

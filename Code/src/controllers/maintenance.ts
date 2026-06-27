@@ -4,7 +4,7 @@ import {
     getCertificatesBeforeDate,
     getCertificatesBeforeStudentNumber,
     getCertificatesByCourse,
-    getCertificateByName, getMaintenanceData
+    getCertificateByName, getMaintenanceData, getUsedBytes, getUsedPercentageBytes
 } from "../services/maintenance/maintenance";
 import { getFiltersData } from '../services/certificate/certificates';
 import {Certificate} from "../model/certificate";
@@ -19,12 +19,17 @@ export const getMaintenancePage = async (req: Request, res: Response) => {
     const { files, sortOrder } = await getMaintenanceData(sortParam, courseId);
     const { courses } = await getFiltersData();
 
+    const currentSizeBytes = await getUsedBytes();
+    const usagePercentage = await getUsedPercentageBytes(currentSizeBytes);
+
     res.render('maintenance', {
         files,
         sortOrder,
         sortParam,
         courses,
-        selectedCourseId: courseIdQuery
+        selectedCourseId: courseIdQuery,
+        currentSizeBytes,
+        usagePercentage,
     });
 };
 

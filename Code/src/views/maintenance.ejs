@@ -8,6 +8,21 @@
 <body>
 <h1>Repository Maintenance</h1>
 
+<div style="margin-top: 1.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">
+        <span>Server Storage Usage (Certificates)</span>
+        <span><%= (currentSizeBytes / (1024 * 1024)).toFixed(2) %> MB / 1024 MB (<%= usagePercentage.toFixed(1) %>%)</span>
+    </div>
+
+    <div style="width: 100%; background-color: #e0e0e0; border-radius: 8px; overflow: hidden; height: 20px;">
+        <div style="height: 100%; transition: width 0.3s ease;
+                width: <%= usagePercentage %>%;
+                /* Color shifts: Green by default, Orange at >75%, Red at >90% */
+                background-color: <%= usagePercentage > 90 ? '#f44336' : (usagePercentage > 75 ? '#ff9800' : '#4caf50') %>;">
+        </div>
+    </div>
+</div>
+
 <% const courseQuery = selectedCourseId ? `&courseId=${selectedCourseId}` : ''; %>
 <% const sortQuery = sortParam && sortParam !== 'newest' ? `&sort=${sortParam}` : ''; %>
 

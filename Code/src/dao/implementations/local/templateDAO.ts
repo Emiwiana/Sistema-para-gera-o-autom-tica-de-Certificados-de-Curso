@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs/promises";
 import {Template} from '../../../model/template';
 import {ITemplateDAO} from '../../interfaces/ITemplateDAO';
-import {TemplateRepositoryDir} from '../../../configs/localRepository';
+import {TEMPLATE_REPOSITORY_DIR} from '../../../configs/localRepository';
 
 export class TemplateDAO implements ITemplateDAO {
 
@@ -13,7 +13,7 @@ export class TemplateDAO implements ITemplateDAO {
      
     private async ensureDir(): Promise<void> {
         if (!this.initialized) {
-            await fs.mkdir(TemplateRepositoryDir, {recursive: true});
+            await fs.mkdir(TEMPLATE_REPOSITORY_DIR, {recursive: true});
             this.initialized = true;
         }
     }
@@ -22,7 +22,7 @@ export class TemplateDAO implements ITemplateDAO {
      // Returns the file path for a template with the given ID.
      
     private filePath(id: number): string {
-        return path.join(TemplateRepositoryDir, `${id}.json`);
+        return path.join(TEMPLATE_REPOSITORY_DIR, `${id}.json`);
     }
 
     async getTemplateById(id: number): Promise<Template | null> {
@@ -38,14 +38,14 @@ export class TemplateDAO implements ITemplateDAO {
     async getAllTemplates(): Promise<Template[]> {
         await this.ensureDir();
         try {
-            const files = await fs.readdir(TemplateRepositoryDir);
+            const files = await fs.readdir(TEMPLATE_REPOSITORY_DIR);
             const jsonFiles = files.filter(f => f.endsWith('.json'));
 
             const templates = await Promise.all(
                 jsonFiles.map(async (fileName) => {
                     try {
                         const raw = await fs.readFile(
-                            path.join(TemplateRepositoryDir, fileName),
+                            path.join(TEMPLATE_REPOSITORY_DIR, fileName),
                             'utf-8'
                         );
                         return Template.fromJSON(JSON.parse(raw));

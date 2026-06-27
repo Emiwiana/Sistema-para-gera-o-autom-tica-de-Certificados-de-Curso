@@ -1,5 +1,6 @@
-import { CertificateDAO } from "../../dao/implementations/local/certificateDAO";
-import { Certificate } from "../../model/certificate";
+import {CertificateDAO} from "../../dao/implementations/local/certificateDAO";
+import {Certificate} from "../../model/certificate";
+import {MAX_REPOSITORY_SIZE_BYTES} from "../../configs/certificates/certificateDB";
 
 const dao = new CertificateDAO();
 
@@ -27,6 +28,14 @@ export async function getMaintenanceData(sortParam: string, courseId?: number) {
     }
 
     return { files, sortOrder };
+}
+
+export async function getUsedBytes(){
+    return await dao.getAllCertificatesSize();
+}
+
+export async function getUsedPercentageBytes(bytes: number){
+    return Math.min((bytes / MAX_REPOSITORY_SIZE_BYTES) * 100, 100);
 }
 
 export async function getCertificateByName(name: string): Promise<Certificate[]> {
