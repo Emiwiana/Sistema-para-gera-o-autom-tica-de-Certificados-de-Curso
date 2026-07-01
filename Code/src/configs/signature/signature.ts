@@ -26,15 +26,11 @@ export interface SignatureSettings extends WrittenSignatureSettings {
     hasCertificate: boolean;
 }
 
-
-
 /**
  * Reads persisted signature settings and decrypts the passphrase in memory.
  * Falls back to defaults if the file does not exist yet.
  */
 export function getSignatureSettings(): SignatureSettings {
-
-
         return {
             enabled: config.enabled,
             password: config.password,
@@ -52,20 +48,14 @@ export function getSignatureSettings(): SignatureSettings {
  * before being written to disk. `hasCertificate` is derived from filesystem state.
  */
 export function saveSignatureSettings(update: Partial<Omit<SignatureSettings, "hasCertificate">>): void {
-    const currentSettings = getSignatureSettings();
-
-    const passphraseToStore = update.password !== undefined
-        ? update.password
-        : currentSettings.password;
-
+    const passphraseToStore = update.password !== undefined ? update.password : config.password;
     const newSettings: WrittenSignatureSettings = {
-        enabled: update.enabled ?? currentSettings.enabled,
-        name: update.name ?? currentSettings.name,
-        contactInfo: update.contactInfo ?? currentSettings.contactInfo,
-        location: update.location ?? currentSettings.location,
-        reason: update.reason ?? currentSettings.reason,
+        enabled: update.enabled ?? config.enabled,
+        name: update.name ?? config.name,
+        contactInfo: update.contactInfo ?? config.contactInfo,
+        location: update.location ?? config.location,
+        reason: update.reason ?? config.reason,
         password: passphraseToStore ? decrypt(passphraseToStore) : "",
     };
-
     fs.writeFileSync("./signature.json", JSON.stringify(newSettings, null, 2), "utf8");
 }

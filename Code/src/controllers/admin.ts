@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { IUserDAO } from '../dao/interfaces/IUserDAO';
 import { SqlUserDAO } from '../dao/implementations/sql/sqlUserDAO';
 import { userRole } from '../model/user';
-import { hash } from 'bcrypt-ts';
+import { generateHashedPassword } from '../services/auth/auth'
 
 const userDAO: IUserDAO = new SqlUserDAO();
 
@@ -41,7 +41,7 @@ export const createUser = async (req: Request, res: Response) => {
     }
 
     try {
-        const hashedPassword = await hash(password, 10);
+        const hashedPassword = generateHashedPassword(password);
         await userDAO.createUser(firstName, lastName, email, hashedPassword, role as userRole);
         res.redirect('/admin/users?success=User+created+successfully.');
     } catch (error) {
@@ -103,7 +103,7 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     try {
-        const hashedPassword = password ? await hash(password, 10) : undefined;
+        const hashedPassword = password ? generateHashedPassword(password) : undefined;
         await userDAO.updateUser(id, firstName, lastName, email, role as userRole, hashedPassword);
         res.redirect('/admin/users?success=User+updated+successfully.');
     } catch (error) {
