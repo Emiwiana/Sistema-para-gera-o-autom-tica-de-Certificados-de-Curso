@@ -27,5 +27,8 @@ p, ADMIN, /admin/users/create, POST
 p, ADMIN, /admin/users/edit/*, GET
 p, ADMIN, /admin/users/edit/*, POST
 p, ADMIN, /admin/users/delete/*, POST
+p, ADMIN, /admin/settings, GET
+p, ADMIN, /admin/settings/signature, POST
+p, ADMIN, /admin/settings/email, POST
 
 g, ADMIN, USER

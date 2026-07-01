@@ -10,3 +10,15 @@ yarn-error.log*
 *.ext
 
 .vscode/*
+
+# Build output
+/dist
+
+# Settings & Certificates (sensitive configs)
+src/configs/signature.json
+src/configs/signature.p12
+src/configs/signature.pfx
+src/configs/email.json
+
+# Generated Certificates
+output/

@@ -65,7 +65,7 @@ export async function processCertificates(studentIds: number[], templateId: numb
  * Only sends to students whose PDF has already been generated.
  * Returns a summary of which students received emails and which were skipped.
  */
-export async function sendCertificateEmails(studentIds: number[]): Promise<{ sent: Student[]; skipped: Student[] }> {
+export async function sendCertificateEmails(studentIds: number[]): Promise<{ sent: Student[]; skipped: Student[]; errors: { student: Student; message: string }[] }> {
     if (!studentIds || studentIds.length === 0) {
         throw new Error("No students selected for emailing.");
     }
@@ -73,6 +73,7 @@ export async function sendCertificateEmails(studentIds: number[]): Promise<{ sen
     const students = await studentDao.getStudentsByIds(studentIds);
     const sent: Student[] = [];
     const skipped: Student[] = [];
+    const errors: { student: Student; message: string }[] = [];
 
     for (const student of students) {
         const certificate = await certificateDao.getCertificateByStudent(student);
@@ -80,9 +81,14 @@ export async function sendCertificateEmails(studentIds: number[]): Promise<{ sen
             skipped.push(student);
             continue;
         }
-        await sendUserCertificateEmail(student, certificate.path);
-        sent.push(student);
+        try {
+            await sendUserCertificateEmail(student, certificate.path);
+            sent.push(student);
+        } catch (error: any) {
+            console.error(`Error sending email to ${student.email}: ${error}`);
+            errors.push({ student, message: error?.message || String(error) });
+        }
     }
 
-    return { sent, skipped };
+    return { sent, skipped, errors };
 }

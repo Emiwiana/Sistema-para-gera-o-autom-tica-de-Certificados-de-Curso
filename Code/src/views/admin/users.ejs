@@ -5,66 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management – Admin</title>
     <link rel="stylesheet" href="/css/main.css">
-    <style>
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .badge-admin {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffd966;
-        }
-        .badge-user {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .actions-cell {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .edit-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            text-decoration: none;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .edit-btn:hover { background-color: #0056b3; text-decoration: none; }
-        .new-user-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            text-decoration: none;
-            padding: 8px 18px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .new-user-btn:hover { background-color: #1e7e34; text-decoration: none; }
-        td, th { vertical-align: middle; }
-    </style>
 </head>
 <body>
 
@@ -82,7 +22,7 @@
     <a href="/admin/users/create" class="new-user-btn" id="btn-new-user">+ New User</a>
 </div>
 
-<table>
+<table class="vertical-middle-cells">
     <thead>
         <tr>
             <th>#ID</th>

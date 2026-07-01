@@ -108,22 +108,18 @@ export const handleGenerateSubmit = async (req: Request, res: Response) => {
 };
 
 export const handleEmailSubmit = async (req: Request, res: Response) => {
+    const templates = await templateDAO.getAllTemplates();
+    const { courses } = await getFiltersData();
+    const students = await getStudentsWithPdfStatus();
+
+    const renderPage = (successMessage: string | null, errorMessage: string | null) =>
+        res.render('generate-certificates', { students, courses, templates, filters: {}, successMessage, errorMessage });
+
     try {
         let { studentIds } = req.body;
-        
-        const templates = await templateDAO.getAllTemplates();
-        const { courses } = await getFiltersData();
-        const students = await getStudentsWithPdfStatus();
 
         if (!studentIds || (Array.isArray(studentIds) && studentIds.length === 0)) {
-            return res.render('generate-certificates', {
-                students,
-                courses,
-                templates,
-                filters: {},
-                successMessage: null,
-                errorMessage: "No students selected for emailing."
-            });
+            return renderPage(null, "Nenhum aluno selecionado para envio de email.");
         }
 
         if (!Array.isArray(studentIds)) {
@@ -131,21 +127,26 @@ export const handleEmailSubmit = async (req: Request, res: Response) => {
         }
         const idsToProcess = studentIds.map((id: string) => parseInt(id));
 
-        const { sent, skipped } = await sendCertificateEmails(idsToProcess);
+        const { sent, skipped, errors } = await sendCertificateEmails(idsToProcess);
 
-        const skippedMessage = skipped.length > 0 ? ` (${skipped.length} skipped - PDF not found)` : '';
-        const successMessage = `Successfully sent ${sent.length} emails!${skippedMessage}`;
+        if (errors.length > 0 && sent.length === 0) {
+            // All failed – show the first error message prominently
+            const firstError = errors[0].message;
+            return renderPage(null, `Erro ao enviar emails: ${firstError}`);
+        }
 
-        res.render('generate-certificates', {
-            students,
-            courses,
-            templates,
-            filters: {},
-            successMessage: successMessage,
-            errorMessage: null
-        });
+        const parts: string[] = [];
+        if (sent.length > 0)    parts.push(`${sent.length} email(s) enviado(s) com sucesso`);
+        if (skipped.length > 0) parts.push(`${skipped.length} ignorado(s) (PDF não encontrado)`);
+        if (errors.length > 0)  parts.push(`${errors.length} falharam (${errors[0].message})`);
+
+        const successMessage = parts.join(' · ');
+        const errorMessage   = errors.length > 0 ? `${errors.length} email(s) falharam: ${errors[0].message}` : null;
+
+        return renderPage(sent.length > 0 ? successMessage : null, errorMessage);
+
     } catch (error: any) {
         console.error(error);
-        res.redirect('/certificates/generate');
+        return renderPage(null, error?.message || "Ocorreu um erro ao enviar os emails.");
     }
 };

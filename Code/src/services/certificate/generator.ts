@@ -1,11 +1,15 @@
 import path from "path";
 import fs from "fs";
-import {pathToFileURL} from "node:url";
-import puppeteer, {Page} from "puppeteer";
-import {Student} from "../../model/student";
-import {CERTIFICATE_REPOSITORY_DIR} from "../../configs/localRepository";
-import {TemplateLayout} from "../../model/template";
-import {prepareElementsForRender} from "./renderHelper";
+import { pathToFileURL } from "node:url";
+import puppeteer, { Page } from "puppeteer";
+import { Student } from "../../model/student";
+import { CERTIFICATE_REPOSITORY_DIR } from "../../configs/localRepository";
+import { TemplateLayout } from "../../model/template";
+import { prepareElementsForRender } from "./renderHelper";
+import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
+import { SignPdf } from "@signpdf/signpdf";
+import { P12Signer } from "@signpdf/signer-p12";
+import { getSignatureSettings, P12_CERT_PATH } from "../../configs/signatureManager";
 
 const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'temp_certificate.html');
 
@@ -38,7 +42,7 @@ export async function generatePdfCertificates(students: Student[], layout: Templ
             } catch (err) {
                 console.error(`Failed to generate for ${student.name}:`, err);
             } finally {
-                fs.unlink(tempCertificatePath, (err) => {})
+                fs.unlink(tempCertificatePath, (err) => { })
                 await page.close();
             }
         }));
@@ -47,7 +51,7 @@ export async function generatePdfCertificates(students: Student[], layout: Templ
     await browser.close();
 }
 
-async function generatePDF(student : Student, page:Page) {
+async function generatePDF(student: Student, page: Page) {
     const fileName: string = student.certificateFileName;
     const fullOutputPath = path.join(CERTIFICATE_REPOSITORY_DIR, fileName);
     const fileUrl = pathToFileURL(path.resolve(tempCertificatePath)).href;
@@ -158,5 +162,47 @@ function renderLayoutToHtml(layout: TemplateLayout, student: Student): string {
 }
 
 async function signCertificate(student : Student)  {
-    // TODO: Lógica de assinar o certificado
+    const settings = getSignatureSettings();
+
+    if (!settings.enabled) {
+        console.log(`[Signature] Assinatura digital desativada para ${student.name}.`);
+        return;
+    }
+
+    if (!settings.hasCertificate || !fs.existsSync(P12_CERT_PATH)) {
+        console.warn(`[Signature] Nenhum certificado .p12 configurado. O PDF de ${student.name} não será assinado.`);
+        return;
+    }
+
+    try {
+        const fileName: string = student.certificateFileName;
+        const filePath = path.join(CERTIFICATE_REPOSITORY_DIR, fileName);
+
+        let file: any = fs.readFileSync(filePath);
+
+        // Adiciona o placeholder (espaço reservado) para a assinatura no buffer do PDF
+        file = plainAddPlaceholder({
+            pdfBuffer: file,
+            reason: settings.reason || "Assinatura Digital",
+            contactInfo: settings.contact || "contacto@example.com",
+            name: settings.name || "Sistema de Certificados",
+            location: settings.location || "Portugal",
+            signatureLength: 8192,
+        } as any);
+
+        // Inicializa o assinador P12 com o certificado da instituição
+        const signer = new P12Signer(fs.readFileSync(P12_CERT_PATH) as any, {
+            passphrase: settings.passphrase || ""
+        });
+        const signPdf = new SignPdf();
+
+        // Aplica a assinatura
+        const signedPdf = await signPdf.sign(file, signer);
+
+        // Reescreve o ficheiro PDF assinado
+        fs.writeFileSync(filePath, signedPdf);
+        console.log(`[Signature] PDF assinado com sucesso para ${student.name}`);
+    } catch (error) {
+        console.error(`[Signature] Erro ao assinar o PDF de ${student.name}:`, error);
+    }
 }

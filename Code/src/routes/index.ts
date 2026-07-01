@@ -4,6 +4,7 @@ import {router as maintenanceRoutes} from './maintenance'
 import {router as certificateRoutes} from './certificates'
 import {router as templatesRoutes} from './templates'
 import {router as adminRoutes} from './admin'
+import {router as settingsRoutes} from './settings'
 
 import { authenticate } from '../middlewares/authenticate';
 import {showDashboard} from "../controllers/dashboard";
@@ -17,6 +18,7 @@ router.use('/auth', authRoutes);
 router.get('/', authenticate, showDashboard);
 router.use('/admin', maintenanceRoutes)
 router.use('/admin', adminRoutes)
+router.use('/admin', settingsRoutes)
 router.use('/certificates', certificateRoutes)
 router.use('/templates', templatesRoutes)
 

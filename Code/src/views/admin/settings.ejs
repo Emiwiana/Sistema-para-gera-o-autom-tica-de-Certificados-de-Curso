@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definições do Sistema – Admin</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<h1>Definições do Sistema</h1>
+
+<% if (successMessage) { %>
+    <p class="success"><%= successMessage %></p>
+<% } %>
+<% if (errorMessage) { %>
+    <p class="error"><%= errorMessage %></p>
+<% } %>
+
+<!-- Tab navigation -->
+<div class="section-tabs">
+    <button class="tab-btn active" onclick="showTab('tab-signature', this)" type="button" id="btn-tab-signature">
+        🔏 Assinatura Digital
+    </button>
+    <button class="tab-btn" onclick="showTab('tab-email', this)" type="button" id="btn-tab-email">
+        ✉ Email (SMTP)
+    </button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 1 — DIGITAL SIGNATURE
+     ══════════════════════════════════════════════════ -->
+<div id="tab-signature" class="tab-panel active">
+<form action="/admin/settings/signature" method="POST" enctype="multipart/form-data">
+
+    <!-- Enable / Disable -->
+    <section class="section">
+        <h2>Estado da Assinatura</h2>
+        <div class="toggle-row">
+            <label class="switch">
+                <input type="checkbox" name="enabled" id="enabled" <%= signatureSettings.enabled ? 'checked' : '' %>>
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-label">
+                Assinatura Digital
+                <%= signatureSettings.enabled
+                    ? '<strong style="color:#28a745">Ativa</strong>'
+                    : '<strong style="color:#6c757d">Inativa</strong>' %>
+            </span>
+        </div>
+        <small style="margin-top:0.75rem;display:block;color:#777;">
+            Quando inativa, os PDFs são gerados normalmente sem assinatura digital.
+        </small>
+    </section>
+
+    <!-- Certificate (.p12) -->
+    <section class="section">
+        <h2>Certificado Digital (.p12)</h2>
+
+        <div class="security-note">
+            <strong>🔒 Armazenamento seguro</strong>
+            A palavra-passe do certificado é cifrada com AES-256-GCM antes de ser guardada em disco. O texto original nunca é escrito no servidor.
+        </div>
+
+        <div class="form-group">
+            <label>Estado atual do certificado:</label>
+            <% if (signatureSettings.hasCertificate) { %>
+                <span class="status-badge ok">✔ Certificado carregado</span>
+            <% } else { %>
+                <span class="status-badge nok">✘ Nenhum certificado carregado</span>
+            <% } %>
+        </div>
+
+        <div class="form-group">
+            <label for="p12file">Upload de novo certificado (.p12 / .pfx)</label>
+            <input type="file" name="p12file" id="p12file" accept=".p12,.pfx">
+            <small>Carregue um ficheiro para substituir o certificado atual. Deixe em branco para manter o atual.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="passphrase">Palavra-passe do certificado</label>
+            <input type="password" name="passphrase" id="passphrase"
+                   autocomplete="new-password"
+                   placeholder="<%= signatureSettings.hasCertificate
+                       ? '••••••••  (deixe em branco para não alterar)'
+                       : 'Introduza a palavra-passe' %>">
+            <small>
+                <% if (signatureSettings.hasCertificate) { %>
+                    A palavra-passe está guardada de forma cifrada. Preencha apenas se quiser alterá-la.
+                <% } else { %>
+                    Obrigatória quando o certificado é carregado pela primeira vez.
+                <% } %>
+            </small>
+        </div>
+    </section>
+
+    <!-- Institution Metadata -->
+    <section class="section">
+        <h2>Dados da Instituição (Metadados da Assinatura)</h2>
+        <p style="color:#666;font-size:0.9rem;margin-top:0;">
+            Estes dados ficam visíveis nos leitores de PDF (ex.: Adobe Acrobat) ao verificar a assinatura.
+        </p>
+
+        <div class="form-group">
+            <label for="name">Nome da Instituição</label>
+            <input type="text" name="name" id="name"
+                   value="<%= signatureSettings.name %>"
+                   placeholder="Ex.: Universidade de Lisboa">
+        </div>
+
+        <div class="form-group">
+            <label for="contact">E-mail de Contacto</label>
+            <input type="email" name="contact" id="contact"
+                   value="<%= signatureSettings.contact %>"
+                   placeholder="Ex.: certificados@universidade.pt">
+        </div>
+
+        <div class="form-group">
+            <label for="location">Localização</label>
+            <input type="text" name="location" id="location"
+                   value="<%= signatureSettings.location %>"
+                   placeholder="Ex.: Lisboa, Portugal">
+        </div>
+
+        <div class="form-group">
+            <label for="reason">Motivo da Assinatura</label>
+            <input type="text" name="reason" id="reason"
+                   value="<%= signatureSettings.reason %>"
+                   placeholder="Ex.: Autenticação de Certificado de Curso">
+        </div>
+    </section>
+
+    <button type="submit" class="primary-btn" id="btn-save-signature">Guardar Assinatura</button>
+</form>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 2 — EMAIL / SMTP
+     ══════════════════════════════════════════════════ -->
+<div id="tab-email" class="tab-panel">
+<form action="/admin/settings/email" method="POST">
+
+    <section class="section">
+        <h2>Servidor de Email (SMTP)</h2>
+
+        <div class="security-note">
+            <strong>🔒 Armazenamento seguro</strong>
+            A palavra-passe SMTP é cifrada com AES-256-GCM antes de ser guardada em disco. O texto original nunca é escrito no servidor.
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+                <label for="emailHost">Servidor SMTP (host)</label>
+                <input type="text" name="emailHost" id="emailHost"
+                       value="<%= emailSettings.host %>"
+                       placeholder="Ex.: smtp.gmail.com">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label for="emailPort">Porto</label>
+                <input type="number" name="emailPort" id="emailPort"
+                       value="<%= emailSettings.port %>"
+                       min="1" max="65535"
+                       placeholder="587">
+                <small>587 (TLS) ou 465 (SSL)</small>
+            </div>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="emailUser">Utilizador / Email de autenticação</label>
+            <input type="email" name="emailUser" id="emailUser"
+                   value="<%= emailSettings.user %>"
+                   placeholder="Ex.: noreply@universidade.pt">
+        </div>
+
+        <div class="form-group">
+            <label for="emailPassword">Palavra-passe SMTP</label>
+            <input type="password" name="emailPassword" id="emailPassword"
+                   autocomplete="new-password"
+                   placeholder="<%= emailSettings.hasPassword
+                       ? '••••••••  (deixe em branco para não alterar)'
+                       : 'Introduza a palavra-passe SMTP' %>">
+            <small>
+                <% if (emailSettings.hasPassword) { %>
+                    A palavra-passe está guardada de forma cifrada. Preencha apenas se quiser alterá-la.
+                <% } else { %>
+                    Obrigatória para o envio de emails.
+                <% } %>
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label for="emailSender">Endereço de remetente (from)</label>
+            <input type="email" name="emailSender" id="emailSender"
+                   value="<%= emailSettings.sender %>"
+                   placeholder="Ex.: Universidade de Lisboa <noreply@universidade.pt>">
+            <small>Pode ser diferente do utilizador de autenticação.</small>
+        </div>
+    </section>
+
+    <button type="submit" class="primary-btn" id="btn-save-email">Guardar Email</button>
+</form>
+</div>
+
+<p style="margin-top:1.5rem;"><a href="/" class="back-link">← Voltar ao Dashboard</a></p>
+
+<script>
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // Auto-activate the correct tab if the page was submitted
+    <% if (successMessage || errorMessage) { %>
+        if (document.referrer.includes('/signature')) showTab('tab-signature', document.getElementById('btn-tab-signature'));
+        if (document.referrer.includes('/email')) showTab('tab-email', document.getElementById('btn-tab-email'));
+    <% } %>
+</script>
+</body>
+</html>
