@@ -135,7 +135,7 @@
 
 <!-- ══════════════════════════════════════════════════
      TAB 2 — EMAIL / SMTP
-     ══════════════════════════════════════════════════ -->
+     ══════════════════════════════════════════════════
 <div id="tab-email" class="tab-panel">
 <form action="/admin/settings/email" method="POST">
 
@@ -200,6 +200,7 @@
     <button type="submit" class="primary-btn" id="btn-save-email">Guardar Email</button>
 </form>
 </div>
+-->
 
 <p style="margin-top:1.5rem;"><a href="/" class="back-link">← Voltar ao Dashboard</a></p>
 
@@ -214,7 +215,7 @@
     // Auto-activate the correct tab if the page was submitted
     <% if (successMessage || errorMessage) { %>
         if (document.referrer.includes('/signature')) showTab('tab-signature', document.getElementById('btn-tab-signature'));
-        if (document.referrer.includes('/email')) showTab('tab-email', document.getElementById('btn-tab-email'));
+        //if (document.referrer.includes('/email')) showTab('tab-email', document.getElementById('btn-tab-email'));
     <% } %>
 </script>
 </body>

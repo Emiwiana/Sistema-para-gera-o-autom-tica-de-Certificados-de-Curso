@@ -1,7 +1,7 @@
 import nodemailer, { SendMailOptions } from 'nodemailer';
-import { getEmailSettings } from "../../configs/emailManager";
 import { Student } from "../../model/student";
 import { CertificateDAO } from "../../dao/implementations/local/certificateDAO";
+import settings from "../../configs/email"
 
 const dao = new CertificateDAO();
 
@@ -10,21 +10,19 @@ const dao = new CertificateDAO();
  * Called per-send so any settings change takes effect immediately without restart.
  */
 function createTransporter() {
-    const settings = getEmailSettings();
-
-    if (!settings.host || !settings.user || !settings.hasPassword) {
+    if (!settings.EMAIL_HOST || !settings.EMAIL_USER || !settings.EMAIL_PASSWORD) {
         throw new Error(
             "Email não configurado. Aceda a Definições → Email para inserir as credenciais SMTP."
         );
     }
 
     return nodemailer.createTransport({
-        host: settings.host,
-        port: settings.port,
-        secure: settings.port === 465, // true for port 465, false for others (STARTTLS)
+        host: settings.EMAIL_HOST,
+        port: settings.EMAIL_PORT,
+        secure: settings.EMAIL_PORT === 465, // true for port 465, false for others (STARTTLS)
         auth: {
-            user: settings.user,
-            pass: settings.password,
+            user: settings.EMAIL_USER,
+            pass: settings.EMAIL_PASSWORD,
         },
     });
 }
@@ -33,11 +31,10 @@ export const sendUserCertificateEmail = async (student: Student, filePath?: stri
     const certificate = await dao.getCertificateByStudent(student);
     if (certificate == null) { return; }
 
-    const settings = getEmailSettings();
     const transporter = createTransporter(); // throws if not configured
 
     const mailOptions: SendMailOptions = {
-        from: settings.sender || settings.user,
+        from: settings.EMAIL_SENDER,
         to: student.email,
         subject: `Certificado ${student.name}!`,
         html: `

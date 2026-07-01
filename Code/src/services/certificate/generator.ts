@@ -9,7 +9,7 @@ import { prepareElementsForRender } from "./renderHelper";
 import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
 import { SignPdf } from "@signpdf/signpdf";
 import { P12Signer } from "@signpdf/signer-p12";
-import { getSignatureSettings, P12_CERT_PATH } from "../../configs/signatureManager";
+import { getSignatureSettings, P12_CERT_PATH } from "../../configs/signature/signature";
 
 const tempCertificatePath: string = path.join(__dirname, 'template', 'html', 'temp_certificate.html');
 
@@ -184,7 +184,7 @@ async function signCertificate(student : Student)  {
         file = plainAddPlaceholder({
             pdfBuffer: file,
             reason: settings.reason || "Assinatura Digital",
-            contactInfo: settings.contact || "contacto@example.com",
+            contactInfo: settings.contactInfo || "contacto@example.com",
             name: settings.name || "Sistema de Certificados",
             location: settings.location || "Portugal",
             signatureLength: 8192,
@@ -192,7 +192,7 @@ async function signCertificate(student : Student)  {
 
         // Inicializa o assinador P12 com o certificado da instituição
         const signer = new P12Signer(fs.readFileSync(P12_CERT_PATH) as any, {
-            passphrase: settings.passphrase || ""
+            passphrase: settings.password || ""
         });
         const signPdf = new SignPdf();
 

@@ -1,15 +1,12 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import { getSignatureSettings, saveSignatureSettings, P12_CERT_PATH } from "../configs/signatureManager";
-import { getEmailSettings, saveEmailSettings } from "../configs/emailManager";
+import { getSignatureSettings, saveSignatureSettings, P12_CERT_PATH } from "../configs/signature/signature";
 
 /** GET /admin/settings */
 export const getSettingsPage = (_req: Request, res: Response) => {
     const signatureSettings = getSignatureSettings();
-    const emailSettings = getEmailSettings();
     res.render("admin/settings", {
         signatureSettings,
-        emailSettings,
         successMessage: null,
         errorMessage: null,
     });
@@ -29,11 +26,11 @@ export const updateSignatureSettings = (req: Request, res: Response) => {
         saveSignatureSettings({
             enabled: enabled === "on" || enabled === "true",
             name: name || "",
-            contact: contact || "",
+            contactInfo: contact || "",
             location: location || "",
             reason: reason || "Autenticação de Certificado de Curso",
             // Only update passphrase if a new non-empty value was provided
-            ...(passphrase ? { passphrase } : {}),
+            ...(passphrase ? { password: passphrase } : {}),
         });
 
         _renderSettings(res, "Definições de assinatura guardadas com sucesso!", null);
@@ -43,7 +40,8 @@ export const updateSignatureSettings = (req: Request, res: Response) => {
     }
 };
 
-/** POST /admin/settings/email */
+/*
+//POST /admin/settings/email
 export const updateEmailSettings = (req: Request, res: Response) => {
     try {
         const { emailHost, emailPort, emailUser, emailPassword, emailSender } = req.body;
@@ -67,12 +65,11 @@ export const updateEmailSettings = (req: Request, res: Response) => {
         console.error("Error saving email settings:", error);
         _renderSettings(res, null, "Erro ao guardar as definições de email. Tente novamente.");
     }
-};
+};*/
 
 function _renderSettings(res: Response, successMessage: string | null, errorMessage: string | null) {
     res.render("admin/settings", {
         signatureSettings: getSignatureSettings(),
-        emailSettings: getEmailSettings(),
         successMessage,
         errorMessage,
     });
